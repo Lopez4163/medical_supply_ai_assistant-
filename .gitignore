@@ -1,0 +1,32 @@
+# Operating-system and editor files
+.DS_Store
+.idea/
+.vscode/
+
+# Future application artifacts
+node_modules/
+.next/
+dist/
+build/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Future environment, secrets, and local data
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*.json
+secrets/
+data/
+uploads/
+
+# Future infrastructure artifacts
+.terraform/
+*.tfstate
+*.tfstate.*
