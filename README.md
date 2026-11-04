@@ -23,7 +23,7 @@ The proposed stack is Next.js, React, TypeScript, and Tailwind CSS on the fronte
 
 ## Documentation status
 
-The [Product Requirements Document baseline](docs/01-product-requirements.md) is approved at version 1.0 for product requirements and MVP scope. This approval does not resolve business permissions, privacy/safety review, deployment readiness, implementation, or release decisions; its documented open decisions remain outstanding. The documentation set will later add conversation flows, catalog/inventory design, business operations, technical architecture, database/API design, and a development roadmap.
+The [Product Requirements Document baseline](docs/01-product-requirements.md) is approved at version 1.1 for product requirements and MVP scope, including the approved five-request conversational-memory amendment. The [Conversation Flow Specification](docs/02-conversation-flows.md) remains version 0.2, Draft — pending final review. The [Product Catalog & Inventory baseline](docs/03-product-catalog-inventory.md) is approved at version 1.0 for the synthetic catalog specification. Document 04, Business Operations, is next; technical architecture, database/API design, and the development roadmap follow. These statuses do not resolve business permissions, privacy/safety review, image rights, deployment readiness, implementation, or public-release decisions; documented open decisions remain outstanding.
 
 ## Planned phases
 

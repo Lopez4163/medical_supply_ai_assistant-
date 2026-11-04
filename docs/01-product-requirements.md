@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Organization | Queens Tech Bros (QTB) |
-| Version | 1.0 |
+| Version | 1.1 |
 | Status | Approved — Product Requirements Baseline |
 | Owner | QTB product and engineering team |
 | Last updated | 2026-11-02 |
@@ -32,7 +32,7 @@ QTB needs a credible, safe, and inspectable demonstration of full-stack engineer
 
 ### Success criteria
 
-The MVP is successful when its critical workflows can be demonstrated reliably with synthetic data: product discovery; unambiguous-SKU quote changes; seven-day resumable guest sessions; quote and support submissions; PostgreSQL persistence; and recoverable Google Sheets synchronization. Public release is quality-gated by section 13. The initial **proposed** aggregate AI-evaluation target is 90% across approximately 65 scenarios; this is not a measured result and requires refinement before release.
+The MVP is successful when its critical workflows can be demonstrated reliably with synthetic data: product discovery; unambiguous-SKU quote changes; seven-day resumable guest sessions with five-request capacity; quote and support submissions; PostgreSQL persistence; and recoverable Google Sheets synchronization. Public release is quality-gated by section 13. The initial **proposed** aggregate AI-evaluation target is 90% across approximately 65 scenarios; this is not a measured result and requires refinement before release.
 
 ## 4. Stakeholders and personas
 
@@ -50,14 +50,14 @@ The MVP is successful when its critical workflows can be demonstrated reliably w
 
 - A synthetic catalog targeting approximately 90 sellable SKUs (acceptable planning range: 75–100), across supplies, diagnostics, consumables, sanitation, and selected OTC products.
 - Conversation-led discovery with embedded product cards, deterministic product constraints, semantic retrieval, and direct database price/inventory reads.
-- Guest-only sessions, conversation memory, one active and one resumable prior request, and independently persistent quote drafts.
+- Guest-only sessions, conversation memory with one active and up to four saved resumable requests (maximum five stored requests), and independently persistent quote drafts.
 - Draft quotations, confirmed quotation inquiry submission, optional support forwarding, PostgreSQL persistence, and one-way Google Sheets demonstration synchronization.
 - Approved company-information documents, RAG, safety controls, automated tests, and an initial evaluation suite targeting approximately 65 scenarios.
 
 ### Primary user journeys
 
 1. **Find and quote:** A guest sees the demo/privacy disclosure before entering a quote or support submission, describes a need, and receives useful matches when possible or only material clarifying questions. The guest selects an unambiguous SKU, adjusts quantity through chat or UI, reviews a draft, supplies first/last name plus email or phone, and explicitly confirms submission. The user sees a request number after PostgreSQL persistence.
-2. **Change context:** A guest moves from one request to another. The system retains the active conversational request and one prior resumable conversational request, replaces the older prior request on a further switch, retains conversation history separately, and cannot silently add, remove, or alter the independently persistent draft quote.
+2. **Change context:** A guest moves among topics. The system retains one active conversational request plus up to four saved resumable requests (maximum five), evicts the least-recently-used inactive request when capacity is reached, retains conversation history separately, and cannot silently add, remove, or alter the independently persistent draft quote.
 3. **Availability exception:** A requested product or quantity is unavailable. The assistant reports a status rather than exact stock, proposes up to three validated available alternatives with meaningful differences, and still allows an inquiry for the original item without promising fulfillment.
 4. **Business-information question:** A guest asks an approved company/policy question. The assistant retrieves approved documents and answers only from grounded information; where information is unavailable, it avoids fabrication and offers human support when appropriate.
 5. **Human support:** A guest requests or is offered human help, opts in, provides contact information and an inquiry description, reviews, and explicitly submits. The record is stored and later synchronized to a separate Sheets tab.
@@ -70,9 +70,9 @@ The MVP is successful when its critical workflows can be demonstrated reliably w
 | BR-002 | Maintain structured PostgreSQL catalog data for approximately 75–100 synthetic SKUs, target 90, including category, variant, specifications, price, packaging, and availability. | Catalog records contain required fields; prices are labeled indicative and subject to human confirmation. |
 | BR-003 | Provide a representative SKU image, licensed/permitted/generated as appropriate, plus fallback; persist a URL or object reference rather than binary image data in PostgreSQL. | Every SKU resolves to an image or fallback; database schema stores only reference metadata. |
 | FR-001 | Render product cards within the conversation, including image, name, variant, package size, indicative price, availability, and Add to Quote action. | Each returned product result exposes these fields, or an explicit image fallback when its image is unavailable; Add to Quote routes through SKU validation; no storefront is required. |
-| FR-002 | Manage flexible request state: one active conversational request and one resumable prior conversational request; replace the older prior request upon a further topic change; retain history separately from a persistent draft quote. | State-transition tests cover activation, first switch, and second switch; at every transition the draft's SKU lines and quantities are unchanged unless the guest explicitly mutates the draft. Detailed transition diagrams are deferred to Document 02. |
+| FR-002 | Manage flexible request state: one active conversational request plus up to four additional saved, resumable requests, for a maximum of five stored requests; preserve each saved request's filters, selected SKU, requested quantity, relevant context, and unanswered clarification; support natural-language resumption and clickable saved-topic chips; evict the least-recently-used inactive request at capacity; retain conversation history separately from a persistent draft quote. | State-transition tests cover topic creation, switching, natural-language and chip-based resumption, and least-recently-used inactive-request eviction at capacity; at every transition the draft's SKU lines and quantities are unchanged unless the guest explicitly mutates the draft. Detailed transition diagrams are specified in Document 02. |
 | FR-003 | Support one active persistent draft quote per guest session with multiple SKU lines and add/remove/quantity changes through natural language and UI; collect first/last name and valid email or phone; require review and confirmation. | For a resolved SKU, add, remove, and quantity changes update only the named line and persist across conversation switches; submission is blocked until contact and explicit confirmation are valid. |
-| FR-004 | Persist secure opaque guest sessions; restore chat and the active draft in the same browser; expire inactive sessions after seven days with activity renewal; use LangGraph checkpoints and PostgreSQL authoritative draft tables. | Same-browser restoration restores the active conversational request, one resumable prior request when present, and the draft within the rolling seven-day activity window; an inactive session is not restored after expiry; submissions follow a separate retention policy. |
+| FR-004 | Persist secure opaque guest sessions; restore chat, the active request, up to four saved requests and their associated conversational context, and the active draft in the same browser; expire inactive sessions after seven days with activity renewal; use LangGraph checkpoints and PostgreSQL authoritative draft tables. | Browser refresh and same-browser restoration restore the active request, up to four saved requests, associated context, and the draft within the rolling seven-day activity window; an expired session cannot resume protected state; quote drafts remain authoritative in PostgreSQL; submissions follow a separate retention policy. |
 | FR-005 | After durable quote submission, show a unique request number and read-only confirmation, clear the current draft, keep the chat and session usable, support later independent submissions, and require a new inquiry for post-submission changes. | Confirmation is produced only after PostgreSQL persistence; the submitted request is immutable; the successful submission clears only the current draft and does not end chat; contact reuse requires confirmation. |
 | FR-006 | Use PostgreSQL-first, one-way Google Sheets synchronization with a transactionally created durable synchronization record, stable request identifier, retries, duplicate protection, and reconciliation for uncertain writes. | Customer confirmation depends on PostgreSQL only; each Sheets attempt uses the stable request identifier; automatic retries do not blindly create duplicate rows; failed/ambiguous outcomes remain observable, traceable, and recoverable through reconciliation. |
 | FR-007 | Maintain structured basic company facts and about six approved knowledge documents for overview, shipping, returns, bulk ordering, product inquiries, and support; use embeddings and pgvector RAG. | Answers rely on approved retrieved content or state uncertainty; unsupported policy/product claims are not emitted. |
@@ -99,7 +99,7 @@ Additional quality expectations are implementation constraints, not asserted out
 - A quote may include only unambiguously identified SKUs. Submitted quotes and support records are immutable to guests; later changes create a new inquiry.
 - A valid quote contact consists of first name, last name, and at least one valid email address or phone number. Previously provided contact information may be reused only after confirmation.
 - A guest can maintain exactly one active quote draft per session. Conversation-topic state never silently removes it.
-- The active conversational request and one resumable prior conversational request are separate from the persistent draft quote. Switching or resuming conversation state cannot mutate the draft unless the guest explicitly performs a draft action.
+- The active conversational request and up to four saved resumable requests (maximum five stored requests) are separate from the persistent draft quote. Switching or resuming conversation state cannot mutate the draft unless the guest explicitly performs a draft action. When at capacity, the least-recently-used inactive request is evicted.
 - A submitted quotation request is immutable and distinct from the draft from which it was submitted. Successful submission clears the current draft but leaves the chat usable for a new, independent draft.
 - Customer success messaging confirms PostgreSQL persistence, not Google Sheets completion. It must not imply successful Sheets synchronization when synchronization is pending, failed, or uncertain.
 - RAG may answer only from approved information. Medical-related output remains factual and non-personalized.
@@ -111,7 +111,7 @@ The MVP excludes customer accounts; checkout/payments; real orders, fulfillment,
 
 ## 10. Data and integration requirements
 
-PostgreSQL is the private source of truth for structured catalog records, numeric stock, guest-session metadata, quote drafts and immutable submissions, support submissions, and synchronization tasks/results. Public visitors have no direct database access. pgvector stores or supports retrieval vectors for approved documents and relevant product descriptions/attributes. Product images are held externally or generated under acceptable rights and referenced by URL/object key. The data model must distinguish the active conversational request, one resumable prior request, the persistent draft, and immutable submitted records, and retain idempotency/deduplication data.
+PostgreSQL is the private source of truth for structured catalog records, numeric stock, guest-session metadata, quote drafts and immutable submissions, support submissions, and synchronization tasks/results. Public visitors have no direct database access. pgvector stores or supports retrieval vectors for approved documents and relevant product descriptions/attributes. Product images are held externally or generated under acceptable rights and referenced by URL/object key. The data model must distinguish one active conversational request, up to four saved resumable requests (maximum five stored requests), the persistent draft, and immutable submitted records, and retain idempotency/deduplication data.
 
 Google Sheets is a downstream, one-way demonstration integration. Quote and support records synchronize to distinct tabs in a dedicated synthetic spreadsheet. Sheets credentials stay server-side; the spreadsheet is private and access is restricted to authorized project personnel; visitors receive neither access nor spreadsheet identifiers that create access paths. PostgreSQL persistence and a durable synchronization record are created transactionally before customer confirmation. Every Sheets write uses the stable request identifier, and ambiguous write outcomes require reconciliation before they can be treated as synchronized. Specific retry algorithms and database contracts are deferred to later technical documents.
 
@@ -166,7 +166,13 @@ Release evidence must include: passing critical automated tests; completed end-t
 - Catalog taxonomy, final SKU attributes, image sourcing/licenses, approved document text, and user-facing disclosures.
 - Public-demo host, domain, observability platform, data-residency expectations, and AWS validation budget/teardown owner.
 
-## 15. Requirement traceability and acceptance management
+## 15. Approved amendment history
+
+| Version | Date | Approved amendment | Approval boundary |
+| --- | --- | --- | --- |
+| 1.1 | 2026-11-02 | Replaces the previous one-active/one-previous conversational-request capacity with one active request plus up to four saved resumable requests (maximum five), natural-language and chip-based resumption, and least-recently-used inactive-request eviction. | This approves only the product-requirements and MVP-scope amendment. It does not approve unresolved business permissions, privacy/safety reviews, provider selection, deployment readiness, implementation, or release decisions. |
+
+## 16. Requirement traceability and acceptance management
 
 The functional-requirements table is the authoritative initial mapping from approved identifiers to acceptance criteria. NFR-001 maps to section 13. Before implementation, each requirement should be decomposed into design references, test cases, owner, priority, release target, and evidence link in the future [development roadmap](07-development-roadmap.md). Conversation-specific state transitions should be specified in [conversation flows](02-conversation-flows.md); operating procedures in [business operations](04-business-operations.md).
 
