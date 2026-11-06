@@ -10,9 +10,14 @@ dist/
 build/
 __pycache__/
 *.py[cod]
+.venv/
+venv/
+.ruff_cache/
 .pytest_cache/
 .mypy_cache/
+*.tsbuildinfo
 .coverage
+coverage.xml
 htmlcov/
 
 # Future environment, secrets, and local data
