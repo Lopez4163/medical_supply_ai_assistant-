@@ -7,7 +7,7 @@
 | Status | Approved — Product Catalog & Inventory Baseline |
 | Owner | QTB Product and Engineering |
 | Date | 2026-11-03 |
-| References | [PRD v1.1](01-product-requirements.md); [Conversation Flow Specification v0.2](02-conversation-flows.md) |
+| References | [PRD v1.2](01-product-requirements.md); [Conversation Flow Specification v1.1](02-conversation-flows.md) |
 | Approval | Approved for the synthetic catalog specification baseline only. This does not approve image rights, real product claims, supplier authorization, implementation, regulatory-compliance certification, deployment, or public release. |
 
 ## 1. Purpose and scope
@@ -42,7 +42,7 @@ A parent listing is a discoverable product family with a stable `product_id`; it
 | Parent product | Stable `product_id`, name, category, short description, active/discontinued lifecycle, primary image reference/fallback, and shared searchable attributes. |
 | Sellable variant | Unique `sku`, parent reference, selector values, package/sales unit, indicative USD price, numeric stock, availability, and active/discontinued status. |
 | Required fields | Product ID, SKU, name, category, description, sales unit, price, stock, lifecycle status, image reference/fallback, and searchable attributes. |
-| Category-specific attributes | JSONB-style attributes such as `size`, `material`, `capacity_ml`, `seat_width_in`, `absorbency`, `strip_system`, `cuff_size`, `package_count`, and `form`. Exact schema is deferred to Document 06. |
+| Category-specific attributes | JSONB-style attributes such as `size`, `material`, `capacity_ml`, `seat_width_in`, `absorbency`, `strip_system`, `cuff_size`, `package_count`, and `form`. Exact schema is deferred to Document 07. |
 | Selectors | Size, model, capacity, packaging count, or form must be shown when needed to resolve a SKU. |
 | Images | One primary image may be shared by variants when visually appropriate. PostgreSQL stores a URL/object reference and fallback key, never binary image data. |
 
@@ -277,7 +277,7 @@ Fixtures use the synthetic SKUs in this document. They define future tests only;
 | --- | --- |
 | Approved by referenced requirements | Synthetic catalog; per-SKU price and numeric inventory; categorical public availability; no exact count disclosure; no reservation/decrement; SKU resolution before quote mutation; PostgreSQL authority; image references/fallbacks; grounded compatibility boundaries. |
 | Approved in this baseline | The 80-listing/100-SKU synthetic assortment, fictional identifiers, prices, stock levels, image plans, and compatibility mappings. The documented thresholds remain proposed values pending the separate approval stated in section 5. |
-| Deferred | Exact database schema, APIs, migrations, idempotency contracts, and validation implementation → Document 06. |
+| Deferred | Exact database schema, APIs, migrations, idempotency contracts, and validation implementation → Document 07. |
 | Deferred | Business policy, approved company identity, supplier permissions, and final policy/label source text → Document 04. |
 | Deferred | Hosting, object-storage provider, image delivery, infrastructure, and model/provider choices → Document 05. |
 

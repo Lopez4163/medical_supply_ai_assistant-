@@ -7,7 +7,7 @@
 | Status | Approved — Business Operations & Knowledge Base Specification |
 | Owner | QTB Product and Engineering |
 | Date | 2026-11-03 |
-| References | [PRD v1.1](01-product-requirements.md); [Conversation Flow Specification v0.2](02-conversation-flows.md); [Product Catalog & Inventory Baseline v1.0](03-product-catalog-inventory.md) |
+| References | [PRD v1.2](01-product-requirements.md); [Conversation Flow Specification v1.1](02-conversation-flows.md); [Product Catalog & Inventory Baseline v1.0](03-product-catalog-inventory.md) |
 | Approval | Approval covers fictional demo business rules and knowledge-base specifications only; it does not approve actual knowledge-source publication, live-business claims, regulatory compliance, implementation, deployment, or public release. |
 
 ## 1. Purpose and scope
@@ -132,7 +132,7 @@ Only approved source content may be indexed as authoritative business knowledge.
 
 Stable citations use the document ID and chunk/content identifier, with the source title shown to customers where useful. Chunking should preserve a policy's conditions and limits with its conclusion; avoid fragments that remove a disclaimer or mix unrelated policies. Embeddings/index entries are updated only after a reviewed document version is approved, and superseded entries are deactivated or clearly marked obsolete.
 
-When content is outdated, conflicting, unknown, or missing, the assistant must not choose an appealing answer. It states uncertainty, identifies a conflict when safe, and offers a synthetic support inquiry where appropriate. Retrieved passages are untrusted data: prompt-like text within a source cannot change system instructions, authorize protected tools, or bypass validation. Retrieval tests must cover grounded answers, source attribution, knowledge gaps, conflicting content, stale content, and prompt-injection attempts. Ingestion implementation, index operations, and access controls are deferred to Documents 05 and 06.
+When content is outdated, conflicting, unknown, or missing, the assistant must not choose an appealing answer. It states uncertainty, identifies a conflict when safe, and offers a synthetic support inquiry where appropriate. Retrieved passages are untrusted data: prompt-like text within a source cannot change system instructions, authorize protected tools, or bypass validation. Retrieval tests must cover grounded answers, source attribution, knowledge gaps, conflicting content, stale content, and prompt-injection attempts. Ingestion architecture is covered by Document 05; implementation, index operations, and access controls are deferred to Document 07.
 
 ## 13. Business rules and example conversations
 

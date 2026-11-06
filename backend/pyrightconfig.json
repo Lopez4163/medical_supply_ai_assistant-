@@ -1,0 +1,8 @@
+{
+  "include": ["app", "tests", "alembic/env.py", "alembic/versions"],
+  "exclude": [".venv", "alembic/script.py.mako"],
+  "pythonVersion": "3.14",
+  "typeCheckingMode": "standard",
+  "venvPath": ".",
+  "venv": ".venv"
+}
