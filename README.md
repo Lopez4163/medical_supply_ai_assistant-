@@ -11,7 +11,7 @@ Phase 1 establishes the development foundation:
 - Local PostgreSQL 16 with pgvector, separate development and test databases, async SQLAlchemy, Pydantic Settings, and an Alembic baseline migration that enables `vector`.
 - Frontend and backend formatting, linting, type checks, tests, and the GitHub Actions `Quality` workflow.
 
-The chatbot, product catalog, quotations, guest sessions, LangGraph, RAG, embeddings, and Google Sheets integration are planned work and are **not** functional yet. There is no catalog seed command in Phase 1 because catalog data belongs to a later roadmap phase.
+The chatbot, public product catalog, quotations, guest sessions, LangGraph, RAG, embeddings, and Google Sheets integration are planned work and are **not** functional yet. Phase 2 currently provides an explicit local synthetic-catalog seed command, but no catalog API or UI.
 
 ## Tech stack
 
@@ -139,6 +139,25 @@ To confirm connectivity and the extension from the repository root:
 docker compose exec -T postgres psql -U medical_supply_app -d medical_supply -c "SELECT 1;"
 docker compose exec -T postgres psql -U medical_supply_app -d medical_supply_test -c "SELECT extname, extversion FROM pg_extension WHERE extname = 'vector';"
 ```
+
+### Seed the approved synthetic catalog
+
+After migrating, source `backend/.env` and run this command from `backend/`:
+
+```sh
+uv run python -m app.dev.seed_catalog --environment development
+```
+
+For the isolated test database, use:
+
+```sh
+DATABASE_URL="$TEST_DATABASE_URL" uv run python -m app.dev.seed_catalog --environment test
+```
+
+The command is explicit; application startup never seeds data. It only accepts the local loopback
+development or test database with the expected name, uses one transaction, and uses stable fixture
+identifiers. A matching second run is a no-op. If a catalog row differs from the approved synthetic
+fixture, or unrelated catalog data exists, it fails rather than overwriting or truncating data.
 
 Stop the service without deleting the persistent development volume:
 
