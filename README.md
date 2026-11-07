@@ -1,65 +1,200 @@
-# Medical Supply AI Assistant
+# BioMedicHospicare AI Supply Assistant
 
-A portfolio-first, full-stack AI engineering demonstration by **Queens Tech Bros (QTB)**. The project models a guest-facing assistant for a family-owned medical-supply and pharmaceutical-distribution business, helping visitors discover products, check indicative availability, draft quotation requests, and request human support.
+A Queens Tech Bros (QTB) full-stack portfolio project exploring a medical-supply business assistant. It is a synthetic-data demonstration under development—not a live commercial, fulfillment, payment, clinical-care, or customer-operations system. It does not use real customer data or connect public demo activity to real business operations.
 
-## Demonstration boundaries
+## Phase 1 status
 
-This is a pro bono, real-business-inspired demonstration. Catalog items, inventory, prices, customers, operational information, and public submissions are synthetic. Use of any real business branding is contingent on permission. The project is not represented as a production system, does not take payments or create commercial orders, and does not connect public demo submissions to real business operations.
+Phase 1 establishes the development foundation:
 
-## Planned MVP capabilities
+- A Next.js 16 / React 19 frontend that renders a small synthetic-demo landing page.
+- A FastAPI service with database-independent `GET /api/v1/live` and PostgreSQL/pgvector-aware `GET /api/v1/ready` endpoints.
+- Local PostgreSQL 16 with pgvector, separate development and test databases, async SQLAlchemy, Pydantic Settings, and an Alembic baseline migration that enables `vector`.
+- Frontend and backend formatting, linting, type checks, tests, and the GitHub Actions `Quality` workflow.
 
-- AI-guided catalog discovery with in-chat product result cards
-- Hybrid keyword, attribute, and semantic product retrieval
-- Guest sessions, resumable conversation state, and persistent draft quotation requests
-- Availability-aware alternatives and a confirmed quotation-submission flow
-- Approved-information RAG for company and policy questions
-- Optional human-support inquiry workflow
-- PostgreSQL-first persistence with one-way Google Sheets demonstration synchronization
-- Medical-information safety controls, abuse safeguards, automated tests, and AI evaluations
+The chatbot, product catalog, quotations, guest sessions, LangGraph, RAG, embeddings, and Google Sheets integration are planned work and are **not** functional yet. There is no catalog seed command in Phase 1 because catalog data belongs to a later roadmap phase.
 
-## Architectural baseline
+## Tech stack
 
-The proposed stack is Next.js, React, TypeScript, and Tailwind CSS on the frontend; Python, FastAPI, and Pydantic on the backend; LangGraph and LangChain for AI orchestration; PostgreSQL with pgvector; Google Sheets API; Docker; GitHub Actions; and automated testing/evaluation. OpenRouter is the initial conversational LLM gateway, while the selected compatible model remains configurable; Google Gemini Embedding API is used for RAG embeddings. AWS validation is planned as a separate, time-bounded milestone and is not assumed to host the permanent public demo.
+Implemented infrastructure uses Next.js, React, TypeScript, Tailwind CSS, Python, FastAPI, Pydantic Settings, SQLAlchemy async with psycopg, Alembic, PostgreSQL 16 with pgvector, Docker Compose, and GitHub Actions. Quality tooling is Prettier, ESLint, Vitest, Ruff, Pyright, and pytest.
 
-## Documentation status
+The approved future architecture includes LangGraph/LangChain, OpenRouter, Google Gemini embeddings, and Google Sheets. Those integrations are not configured or required for local Phase 1 development.
 
-The [Product Requirements Document baseline](docs/01-product-requirements.md) is approved at version 1.2 for product requirements and MVP scope, including the approved five-request conversational-memory and natural-language-only topic-resumption amendments. The [Conversation Flow Specification](docs/02-conversation-flows.md) is approved at version 1.1 for the customer conversation-flow baseline. The [Product Catalog & Inventory baseline](docs/03-product-catalog-inventory.md) is approved at version 1.0 for the synthetic catalog specification. The [Business Operations & Knowledge Base Specification](docs/04-business-operations.md) is approved at version 1.0 for fictional demo business rules and knowledge-base specifications. The [System & AI Architecture](docs/05-system-ai-architecture.md) is version 1.0, Approved. The [Frontend Implementation Design](docs/06-frontend-implementation-design.md) is version 1.0, Approved. The [Backend & API Design](docs/07-backend-api-design.md) is version 1.0, Approved. The [Development Roadmap](docs/08-development-roadmap.md) is version 1.0, Approved. These statuses do not resolve business permissions, privacy/safety review, image rights, live-business claims, regulatory compliance, deployment readiness, implementation, or public-release decisions; documented open decisions remain outstanding.
+## Prerequisites
 
-## Planned phases
+- Git
+- Node.js **26** and npm (the required Node major is in [`frontend/.nvmrc`](frontend/.nvmrc))
+- Python **3.14**
+- [uv](https://docs.astral.sh/uv/) 0.12 or newer
+- Docker Engine/Desktop and Docker Compose v2+
 
-1. Requirements, architecture, data model, and safety design
-2. Synthetic catalog and backend foundations
-3. Conversational product discovery, RAG, and quotation workflows
-4. Integration, testing, AI evaluation, and public-demo hardening
-5. Affordable public-demo deployment, followed by a separately documented AWS validation and teardown milestone
-
-## Quality checks
-
-FOUND-03 establishes deterministic local and CI quality checks. Use Node 26 (see `frontend/.nvmrc`), Python 3.14, uv 0.12+, and Docker Compose v2 for backend tests.
-
-Frontend commands, from `frontend/`:
+Check the installed toolchain before starting:
 
 ```sh
-npm ci
-npm run format:check
-npm run lint
-npm run typecheck
-npm test
+node --version
+npm --version
+python3 --version
+uv --version
+docker compose version
 ```
 
-Backend commands require a local copy of `backend/.env.example` as `backend/.env` and the local PostgreSQL container:
+If you use nvm, run `nvm use` inside `frontend/` to select Node 26. The backend project rejects Python versions outside 3.14.
+
+## Quick start
+
+Open separate terminals for the backend and frontend servers. The commands below use a POSIX-compatible shell (macOS/Linux).
+
+### 1. Clone and configure the frontend runtime
+
+From a directory where you keep projects:
+
+```sh
+git clone https://github.com/Lopez4163/medical_supply_ai_assistant-.git
+cd medical_supply_ai_assistant-
+cd frontend
+nvm use
+npm ci
+cd ..
+```
+
+If you do not use nvm, install/select Node 26 before running `npm ci`.
+
+### 2. Create local backend configuration
+
+From the repository root:
+
+```sh
+cp backend/.env.example backend/.env
+```
+
+`backend/.env` contains local-only database credentials and is ignored by Git. The supplied values are safe development placeholders; change them together if you need different local credentials.
+
+### 3. Start PostgreSQL with pgvector
+
+From the repository root:
 
 ```sh
 docker compose up -d
+docker compose ps
+```
+
+The database listens on `127.0.0.1:55432` by default. Docker creates `medical_supply` for development and a separate `medical_supply_test` database for tests. The named Docker volume preserves development data between container restarts.
+
+### 4. Install backend dependencies and apply migrations
+
+From the repository root:
+
+```sh
 cd backend
 uv sync --all-groups
 set -a; . ./.env; set +a
 uv run alembic upgrade head
 DATABASE_URL="$TEST_DATABASE_URL" uv run alembic upgrade head
+```
+
+The first migration enables the `vector` extension. Migrations—not application startup—own database initialization. The second command initializes the isolated test database; it is required before backend tests.
+
+### 5. Start the backend
+
+Keep the environment variables loaded in the same terminal and run, from `backend/`:
+
+```sh
+uv run uvicorn app.main:app --host 127.0.0.1 --port 8100
+```
+
+### 6. Start the frontend
+
+In another terminal, from `frontend/`:
+
+```sh
+nvm use
+npm run dev -- --hostname 127.0.0.1 --port 3000
+```
+
+### 7. Smoke-check the running services
+
+From any terminal:
+
+```sh
+curl -i http://127.0.0.1:8100/api/v1/live
+curl -i http://127.0.0.1:8100/api/v1/ready
+curl -I http://127.0.0.1:3000/
+```
+
+`/live` returns `200` with `{"status":"ok"}` whenever FastAPI is running; it deliberately does not require PostgreSQL. `/ready` returns `200` only when PostgreSQL is reachable and pgvector is enabled; otherwise it safely returns `503` with `{"status":"unavailable"}`. The frontend root should return `200` and display the synthetic-data demonstration page.
+
+## Database operations
+
+The Compose service uses `pgvector/pgvector:0.8.0-pg16`, bound only to loopback. The local settings file provides `DATABASE_URL` for `medical_supply` and `TEST_DATABASE_URL` for `medical_supply_test`.
+
+After sourcing `backend/.env`, use these commands from `backend/` to migrate either database:
+
+```sh
+uv run alembic upgrade head
+DATABASE_URL="$TEST_DATABASE_URL" uv run alembic upgrade head
+```
+
+To confirm connectivity and the extension from the repository root:
+
+```sh
+docker compose exec -T postgres psql -U medical_supply_app -d medical_supply -c "SELECT 1;"
+docker compose exec -T postgres psql -U medical_supply_app -d medical_supply_test -c "SELECT extname, extversion FROM pg_extension WHERE extname = 'vector';"
+```
+
+Stop the service without deleting the persistent development volume:
+
+```sh
+docker compose stop postgres
+```
+
+`docker compose down` also keeps the named volume by default. Do not use `docker compose down -v` unless you intentionally want to remove local database data.
+
+## Quality checks
+
+Run frontend checks from `frontend/`:
+
+```sh
+npm run format:check
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
+
+Run backend checks from `backend/` after `uv sync --all-groups`, sourcing `.env`, starting Docker, and migrating the test database:
+
+```sh
 uv run ruff format --check .
 uv run ruff check .
 uv run pyright
 uv run python -m pytest -q
 ```
 
-The GitHub Actions `Quality` workflow runs these same formatter, lint, type, migration, and test checks with a disposable pgvector service. It uses no external AI, embedding, Sheets, or production credentials. Format failures are corrected locally with `npm run format` or `uv run ruff format .`; lint, type, and test failures report the affected file and rule or assertion.
+To apply local formatting, use `npm run format` or `uv run ruff format .`. The GitHub Actions **Quality** workflow runs the frontend checks plus backend formatting, linting, typing, migration, and pytest against a disposable pgvector service. It uses no external AI service or production credentials.
+
+## Git workflow
+
+Use the approved branch flow:
+
+```text
+feature/* → dev → main
+```
+
+Create a focused `feature/*` branch from current `dev`, open a pull request into `dev`, and use the Quality workflow results in review. Changes reach `main` only through the approved `dev` integration path. Do not commit local `.env` files, virtual environments, dependency folders, build output, or database data.
+
+## Project documentation
+
+- [01 — Product Requirements](docs/01-product-requirements.md)
+- [02 — Conversation Flows](docs/02-conversation-flows.md)
+- [03 — Product Catalog & Inventory](docs/03-product-catalog-inventory.md)
+- [04 — Business Operations & Knowledge Base](docs/04-business-operations.md)
+- [05 — System & AI Architecture](docs/05-system-ai-architecture.md)
+- [06 — Frontend Implementation Design](docs/06-frontend-implementation-design.md)
+- [07 — Backend & API Design](docs/07-backend-api-design.md)
+- [08 — Development Roadmap](docs/08-development-roadmap.md)
+
+## Troubleshooting
+
+- **Node or Python version error:** Use Node 26 (`nvm use` in `frontend/`) and Python 3.14. Check both versions before reinstalling dependencies.
+- **`docker compose up` cannot bind port 55432:** Another local service may already use it. Start Compose with a different loopback port, for example `POSTGRES_PORT=55433 docker compose up -d`, then update both URLs in `backend/.env` to the same port.
+- **`/ready` returns 503:** Confirm `docker compose ps` reports the PostgreSQL container healthy, source `backend/.env` before starting Uvicorn, and run the migrations for the development database. `/live` remaining `200` during this condition is expected.
+- **Backend settings validation fails:** Create `backend/.env` from `backend/.env.example`, or provide a valid `DATABASE_URL` in the environment. It must use the `postgresql+psycopg` driver.
