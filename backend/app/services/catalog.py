@@ -26,6 +26,7 @@ class CatalogVariant:
     sku: str
     product_id: str
     category_code: str
+    category_name: str
     name: str
     description: str
     sales_unit: str
@@ -223,6 +224,7 @@ class CatalogService:
             sku=row.variant.sku,
             product_id=row.listing.product_id,
             category_code=row.category.code,
+            category_name=row.category.name,
             name=row.listing.name,
             description=row.listing.description,
             sales_unit=row.variant.sales_unit,
