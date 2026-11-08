@@ -129,7 +129,7 @@ async def test_search_supports_category_and_variant_attribute_filters(
 async def test_inventory_uses_private_stock_without_exposing_it(db_session: AsyncSession) -> None:
     result = await InventoryService(db_session).check_availability(sku="PPE-NIT-M", quantity=30)
 
-    assert result.availability == AvailabilityStatus.IN_STOCK
+    assert result.availability == AvailabilityStatus.LIMITED_STOCK
     assert not result.is_sufficient
     assert "quantity_on_hand" not in asdict(result)
     assert "15" not in repr(result)

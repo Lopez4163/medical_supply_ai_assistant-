@@ -47,6 +47,7 @@ class _InventorySnapshot:
     listing_is_active: bool
     quantity_on_hand: int | None
     selector_attributes: dict[str, object]
+    sales_unit: str
 
 
 class LimitedStockThresholdPolicy:
@@ -57,13 +58,18 @@ class LimitedStockThresholdPolicy:
 
 
 class ProposedLimitedStockThresholdPolicy(LimitedStockThresholdPolicy):
-    """Document 03's proposed thresholds; inject explicitly until independently approved."""
+    """Document 03's approved synthetic-demonstration availability thresholds."""
 
     def threshold_for(self, snapshot: _InventorySnapshot) -> int | None:
         if snapshot.category_code in {"MOB", "BTH", "DGN"}:
             return 3
         if snapshot.category_code == "DIA":
-            if "meter_model" in snapshot.selector_attributes or snapshot.sku.endswith("-LDEV"):
+            if "meter_model" in snapshot.selector_attributes:
+                return 5
+            if (
+                "lancet_system" in snapshot.selector_attributes
+                and snapshot.sales_unit.strip().casefold() == "1 each"
+            ):
                 return 5
             return 20
         if snapshot.category_code in {"PPE", "WND", "CON", "SYR"}:
@@ -81,7 +87,7 @@ class InventoryService:
         threshold_policy: LimitedStockThresholdPolicy | None = None,
     ) -> None:
         self._session = session
-        self._threshold_policy = threshold_policy
+        self._threshold_policy = threshold_policy or ProposedLimitedStockThresholdPolicy()
 
     @staticmethod
     def validate_requested_quantity(quantity: int) -> int:
@@ -127,7 +133,7 @@ class InventoryService:
             .join(ProductListing, SkuVariant.listing_id == ProductListing.id)
             .join(ProductCategory, ProductListing.category_id == ProductCategory.id)
             .outerjoin(InventoryItem, InventoryItem.sku_variant_id == SkuVariant.id)
-            .where(SkuVariant.sku == sku)
+            .where(SkuVariant.sku == sku.strip().upper())
         )
         row = result.one_or_none()
         if row is None:
@@ -142,6 +148,7 @@ class InventoryService:
             listing_is_active=listing.lifecycle_status == CatalogLifecycleStatus.ACTIVE,
             quantity_on_hand=inventory.quantity_on_hand if inventory is not None else None,
             selector_attributes=variant.selector_attributes,
+            sales_unit=variant.sales_unit,
         )
 
     def _classify(self, snapshot: _InventorySnapshot) -> AvailabilityStatus:

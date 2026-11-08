@@ -3,9 +3,11 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncEngine
 
+from app.api.v1.products import router as products_router
 from app.db.session import get_database_engine, is_database_ready
 
 router = APIRouter()
+router.include_router(products_router)
 
 
 class LivenessResponse(BaseModel):
