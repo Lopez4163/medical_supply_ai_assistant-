@@ -96,6 +96,67 @@ async def test_search_enforces_structured_filters_and_returns_five_cards_at_most
 
 
 @pytest.mark.asyncio
+async def test_search_handles_casefolded_unicode_empty_and_unknown_attribute_queries(
+    client_and_session: tuple[httpx.AsyncClient, AsyncSession],
+) -> None:
+    client, _session = client_and_session
+
+    casefolded = await client.get("/api/v1/products/search", params={"q": "NITRILE GLOVES"})
+    unicode_query = await client.get("/api/v1/products/search", params={"q": "nitrile gloves ✚"})
+    empty = await client.get("/api/v1/products/search", params={"q": "not-a-synthetic-product"})
+    unknown_attribute = await client.get(
+        "/api/v1/products/search",
+        params={"attribute_key": "not_a_catalog_attribute", "attribute_value": "value"},
+    )
+
+    assert [product["sku"] for product in casefolded.json()["products"]] == [
+        product["sku"] for product in unicode_query.json()["products"]
+    ]
+    assert casefolded.json()["products"]
+    assert empty.json() == {"products": [], "next_cursor": None}
+    assert unknown_attribute.json() == {"products": [], "next_cursor": None}
+
+
+@pytest.mark.asyncio
+async def test_search_validates_attribute_pairing_and_filters_generic_attributes(
+    client_and_session: tuple[httpx.AsyncClient, AsyncSession],
+) -> None:
+    client, _session = client_and_session
+
+    missing_value = await client.get("/api/v1/products/search", params={"attribute_key": "color"})
+    missing_key = await client.get("/api/v1/products/search", params={"attribute_value": "blue"})
+    generic_filter = await client.get(
+        "/api/v1/products/search",
+        params={"category": "MOB", "attribute_key": "color", "attribute_value": "blue"},
+    )
+
+    assert missing_value.status_code == missing_key.status_code == 422
+    assert [product["sku"] for product in generic_filter.json()["products"]] == ["MOB-WLK-ADJ-BLU"]
+
+
+@pytest.mark.asyncio
+async def test_search_order_is_stable_when_matching_cursor_context_is_repeated(
+    client_and_session: tuple[httpx.AsyncClient, AsyncSession],
+) -> None:
+    client, _session = client_and_session
+
+    first = await client.get("/api/v1/products/search", params={"category": "MOB"})
+    repeated = await client.get("/api/v1/products/search", params={"category": "MOB"})
+    cursor = first.json()["next_cursor"]
+    assert cursor is not None
+    second = await client.get(
+        "/api/v1/products/search", params={"category": "MOB", "cursor": cursor}
+    )
+
+    assert [product["sku"] for product in first.json()["products"]] == [
+        product["sku"] for product in repeated.json()["products"]
+    ]
+    assert not {product["sku"] for product in first.json()["products"]}.intersection(
+        product["sku"] for product in second.json()["products"]
+    )
+
+
+@pytest.mark.asyncio
 async def test_search_cursor_preserves_context_without_duplicates_or_skips(
     client_and_session: tuple[httpx.AsyncClient, AsyncSession],
 ) -> None:
@@ -165,6 +226,19 @@ async def test_product_detail_is_normalized_public_safe_and_handles_discontinued
 
 
 @pytest.mark.asyncio
+async def test_product_detail_returns_the_approved_missing_image_fallback(
+    client_and_session: tuple[httpx.AsyncClient, AsyncSession],
+) -> None:
+    client, _session = client_and_session
+
+    response = await client.get("/api/v1/products/MOB-RLT-STD")
+
+    assert response.status_code == 200
+    assert response.json()["primary_image_reference"] is None
+    assert response.json()["image_fallback_key"] == "PH Mobility"
+
+
+@pytest.mark.asyncio
 async def test_availability_uses_current_stock_without_exposing_or_mutating_it(
     client_and_session: tuple[httpx.AsyncClient, AsyncSession],
 ) -> None:
@@ -195,6 +269,26 @@ async def test_availability_uses_current_stock_without_exposing_or_mutating_it(
     assert insufficient.json()["quantity_sufficient"] is False
     assert not _contains_private_stock(insufficient.json())
     assert inventory.quantity_on_hand == original_quantity
+
+
+@pytest.mark.asyncio
+async def test_availability_preserves_limited_status_at_and_above_quantity_boundary(
+    client_and_session: tuple[httpx.AsyncClient, AsyncSession],
+) -> None:
+    client, _session = client_and_session
+
+    exact_stock = await client.post(
+        "/api/v1/products/availability", json={"sku": "MOB-WLK-ADJ-BLU", "quantity": 3}
+    )
+    excess_stock = await client.post(
+        "/api/v1/products/availability", json={"sku": "MOB-WLK-ADJ-BLU", "quantity": 4}
+    )
+
+    assert (
+        exact_stock.json()["availability"] == excess_stock.json()["availability"] == "limited_stock"
+    )
+    assert exact_stock.json()["quantity_sufficient"] is True
+    assert excess_stock.json()["quantity_sufficient"] is False
 
 
 @pytest.mark.asyncio
