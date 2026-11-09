@@ -68,6 +68,8 @@ cp backend/.env.example backend/.env
 
 `backend/.env` contains local-only database credentials and is ignored by Git. The supplied values are safe development placeholders; change them together if you need different local credentials.
 
+`SESSION_TOKEN_HASH_SECRET` is also required for opaque guest-session token hashing. Use a unique local value of at least 32 characters; do not reuse it in production. `POST /api/v1/sessions` is a qualifying activity that renews the seven-day guest-session window, while `GET /api/v1/sessions/current` validates the session without writing activity.
+
 ### 3. Start PostgreSQL with pgvector
 
 From the repository root:
