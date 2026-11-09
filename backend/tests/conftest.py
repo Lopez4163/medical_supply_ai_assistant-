@@ -28,6 +28,10 @@ def require_test_database_url() -> str:
 @pytest_asyncio.fixture(autouse=True)
 async def reset_database_configuration(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv("DATABASE_URL", require_test_database_url())
+    monkeypatch.setenv("APP_ENVIRONMENT", "test")
+    monkeypatch.setenv(
+        "SESSION_TOKEN_HASH_SECRET", "test-session-hash-secret-with-at-least-32-characters"
+    )
     get_settings.cache_clear()
     await dispose_database_engine()
     yield
