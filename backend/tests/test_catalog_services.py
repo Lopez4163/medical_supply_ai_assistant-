@@ -246,3 +246,44 @@ async def test_alternatives_preserve_hard_requirements_and_exclude_unsafe_candid
 
     assert await service.find_alternatives(sku="PPE-NIT-M", quantity=30) == ()
     assert await service.find_alternatives(sku="CON-SPILL-1", quantity=1) == ()
+
+
+@pytest.mark.asyncio
+async def test_alternatives_preserve_verified_system_compatibility_and_quantity(
+    db_session: AsyncSession,
+) -> None:
+    service = CatalogService(db_session)
+
+    compatible = await service.find_alternatives(
+        sku="DIA-GC-STR-100",
+        quantity=19,
+        compatible_with_sku="DIA-GC-MTR-G1",
+    )
+    insufficient_stock = await service.find_alternatives(
+        sku="DIA-GC-STR-100",
+        quantity=43,
+        compatible_with_sku="DIA-GC-MTR-G1",
+    )
+    unverified_system = await service.find_alternatives(
+        sku="DIA-GC-STR-100",
+        quantity=19,
+        compatible_with_sku="DIA-NT-MTR-N2",
+    )
+
+    assert [alternative.variant.sku for alternative in compatible] == ["DIA-GC-STR-50"]
+    assert compatible[0].difference == "Package count: 50 instead of 100."
+    assert insufficient_stock == ()
+    assert unverified_system == ()
+
+
+@pytest.mark.asyncio
+async def test_out_of_stock_variant_has_a_quantity_validated_sibling_alternative(
+    db_session: AsyncSession,
+) -> None:
+    alternatives = await CatalogService(db_session).find_alternatives(
+        sku="CON-UNDER-10", quantity=1
+    )
+
+    assert [alternative.variant.sku for alternative in alternatives] == ["CON-UNDER-25"]
+    assert alternatives[0].variant.sku != "CON-UNDER-10"
+    assert alternatives[0].difference == "Package count: 25 instead of 10."
