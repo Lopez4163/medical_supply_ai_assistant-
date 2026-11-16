@@ -7,6 +7,7 @@ from app.api.v1.conversations import router as conversations_router
 from app.api.v1.products import router as products_router
 from app.api.v1.quotations import router as quotations_router
 from app.api.v1.sessions import router as sessions_router
+from app.api.v1.support import router as support_router
 from app.db.session import get_database_engine, is_database_ready
 
 router = APIRouter()
@@ -14,6 +15,7 @@ router.include_router(conversations_router)
 router.include_router(products_router)
 router.include_router(quotations_router)
 router.include_router(sessions_router)
+router.include_router(support_router)
 
 
 class LivenessResponse(BaseModel):
