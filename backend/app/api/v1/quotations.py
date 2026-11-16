@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Annotated, NoReturn
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.v1.sessions import get_guest_context, require_quotation_origin
@@ -16,12 +16,17 @@ from app.schemas.quotations import (
     DeleteQuoteLineRequest,
     DraftQuotePublic,
     DraftQuoteResponse,
+    QuoteReviewPublic,
+    QuoteReviewRequest,
+    QuoteSubmissionPublic,
+    QuoteSubmitRequest,
     UpdateQuoteLineRequest,
 )
 from app.services.quotations import (
     IdempotencyPayloadMismatch,
     QuotationService,
     QuoteLineNotFound,
+    QuoteReviewInvalid,
     QuoteSessionInvalid,
     QuoteSkuNotFound,
     QuoteSkuUnresolved,
@@ -67,6 +72,12 @@ def _raise_quote_error(error: Exception) -> NoReturn:
         ) from None
     if isinstance(error, QuoteSkuNotFound):
         raise HTTPException(status_code=404, detail="Product SKU was not found.") from None
+    if isinstance(error, QuoteReviewInvalid):
+        raise HTTPException(
+            status_code=409, detail="The quotation review is invalid or expired."
+        ) from None
+    if isinstance(error, ValueError):
+        raise HTTPException(status_code=422, detail=str(error)) from None
     raise error
 
 
@@ -135,3 +146,61 @@ async def delete_quote_line(
         QuoteSessionInvalid,
     ) as error:
         _raise_quote_error(error)
+
+
+@router.post("/draft/review", response_model=QuoteReviewPublic)
+async def review_quote_draft(
+    request: QuoteReviewRequest,
+    _: Annotated[None, Depends(require_quotation_origin)],
+    guest: Annotated[GuestContext, Depends(get_guest_context)],
+    service: Annotated[QuotationService, Depends(get_quotation_service)],
+) -> QuoteReviewPublic:
+    try:
+        return await service.review_draft(
+            guest=guest,
+            expected_version=request.expected_version,
+            contact=request.contact.model_dump(),
+            fulfillment=request.fulfillment,
+            delivery_city=request.delivery_city,
+        )
+    except (QuoteVersionConflict, QuoteSessionInvalid, QuoteReviewInvalid, ValueError) as error:
+        _raise_quote_error(error)
+
+
+@router.post("/submissions", response_model=QuoteSubmissionPublic, status_code=201)
+async def submit_quote(
+    request: QuoteSubmitRequest,
+    response: Response,
+    _: Annotated[None, Depends(require_quotation_origin)],
+    guest: Annotated[GuestContext, Depends(get_guest_context)],
+    service: Annotated[QuotationService, Depends(get_quotation_service)],
+) -> QuoteSubmissionPublic:
+    try:
+        result = await service.submit_draft(
+            guest=guest,
+            review_token=request.review_token,
+            expected_version=request.expected_version,
+            operation_id=request.operation_id,
+        )
+        if service.last_submission_was_replay:
+            response.status_code = 200
+        return result
+    except (
+        QuoteVersionConflict,
+        QuoteSessionInvalid,
+        QuoteReviewInvalid,
+        IdempotencyPayloadMismatch,
+    ) as error:
+        _raise_quote_error(error)
+
+
+@router.get("/submissions/reconcile/{operation_id}", response_model=QuoteSubmissionPublic)
+async def reconcile_quote_submission(
+    operation_id: UUID,
+    guest: Annotated[GuestContext, Depends(get_guest_context)],
+    service: Annotated[QuotationService, Depends(get_quotation_service)],
+) -> QuoteSubmissionPublic:
+    result = await service.reconcile_submission(guest=guest, operation_id=operation_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail="Submission operation was not found.")
+    return result
