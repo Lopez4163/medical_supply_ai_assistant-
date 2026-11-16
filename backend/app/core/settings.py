@@ -1,6 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal, Self
+from urllib.parse import urlsplit
 
 from pydantic import SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -30,6 +31,7 @@ class Settings(BaseSettings):
     app_environment: Literal["development", "test", "production"] = "development"
     session_token_hash_secret: SecretStr
     guest_session_inactivity_days: int = 7
+    trusted_origins: str = "http://localhost:3000,http://localhost:8000"
     welcome_message: str = (
         "Welcome to BioMedicHospicare's AI Supply Assistant! I can help you explore our "
         "demonstration medical-supply catalog, check availability, and prepare a quotation "
@@ -64,6 +66,28 @@ class Settings(BaseSettings):
                 "in production."
             )
         return self
+
+    @property
+    def quotation_trusted_origins(self) -> tuple[str, ...]:
+        """Configured browser origins; reverse proxies must configure this explicitly."""
+        origins = tuple(
+            origin.strip() for origin in self.trusted_origins.split(",") if origin.strip()
+        )
+        if not origins:
+            raise ValueError("TRUSTED_ORIGINS must define at least one origin.")
+        for origin in origins:
+            parsed = urlsplit(origin)
+            if (
+                parsed.scheme not in {"http", "https"}
+                or not parsed.netloc
+                or parsed.path
+                or parsed.query
+                or parsed.fragment
+                or parsed.username
+                or parsed.password
+            ):
+                raise ValueError("TRUSTED_ORIGINS entries must be absolute origins without a path.")
+        return origins
 
     @property
     def guest_session_cookie_name(self) -> str:
