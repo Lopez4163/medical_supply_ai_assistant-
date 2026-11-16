@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from typing import Annotated
+from urllib.parse import urlsplit
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -29,15 +30,43 @@ async def require_same_origin(request: Request) -> None:
         raise HTTPException(status_code=403, detail="Cross-origin request is not allowed.")
 
 
+async def require_quotation_origin(
+    request: Request,
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> None:
+    """Require one configured browser Origin for unsafe quotation mutations."""
+    origins = request.headers.getlist("origin")
+    if len(origins) != 1:
+        raise HTTPException(status_code=403, detail="A valid Origin header is required.")
+    origin = origins[0]
+    parsed = urlsplit(origin)
+    if (
+        parsed.scheme not in {"http", "https"}
+        or not parsed.netloc
+        or parsed.path
+        or parsed.query
+        or parsed.fragment
+        or parsed.username
+        or parsed.password
+        or origin not in settings.quotation_trusted_origins
+    ):
+        raise HTTPException(status_code=403, detail="Cross-origin request is not allowed.")
+
+
 async def get_guest_context(
     request: Request,
     service: Annotated[SessionService, Depends(get_session_service)],
     settings: Annotated[Settings, Depends(get_settings)],
+    session: Annotated[AsyncSession, Depends(get_db_session)],
 ) -> GuestContext:
     try:
-        return await service.require_context(
+        context = await service.require_context(
             raw_token=request.cookies.get(settings.guest_session_cookie_name)
         )
+        # Authentication is a read-only lookup. Release its implicit transaction so a
+        # protected aggregate service can own the following mutation transaction.
+        await session.rollback()
+        return context
     except InvalidGuestSession:
         raise HTTPException(
             status_code=401, detail="Guest session is missing or invalid."

@@ -10,16 +10,21 @@ from app.models.catalog import (
     SkuVariant,
 )
 from app.models.conversation import Conversation, ConversationMessage, GuestSession
+from app.models.quotation import IdempotencyOperation, QuoteDraft, QuoteDraftLine, QuoteDraftStatus
 
 __all__ = [
     "CompatibilityState",
     "Conversation",
     "ConversationMessage",
     "GuestSession",
+    "IdempotencyOperation",
     "ImageProvenanceStatus",
     "InventoryItem",
     "ProductCategory",
     "ProductListing",
+    "QuoteDraft",
+    "QuoteDraftLine",
+    "QuoteDraftStatus",
     "SkuCompatibility",
     "SkuVariant",
 ]
