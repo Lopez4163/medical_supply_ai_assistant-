@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.v1.sessions import get_guest_context, require_quotation_origin
+from app.core.errors import api_error_responses
 from app.core.settings import Settings, get_settings
 from app.db.session import get_db_session
 from app.schemas.support import (
@@ -38,7 +39,13 @@ def get_support_inquiry_service(
 def _raise_support_error(error: Exception) -> NoReturn:
     if isinstance(error, (SupportReviewInvalid, SupportIdempotencyPayloadMismatch)):
         raise HTTPException(
-            status_code=409, detail="The support review or operation is invalid."
+            status_code=409,
+            detail={
+                "code": "CONFIRMATION_INVALID"
+                if isinstance(error, SupportReviewInvalid)
+                else "VALIDATION_FAILED",
+                "message": "The support review or operation is invalid.",
+            },
         ) from None
     if isinstance(error, SupportContactUnavailable):
         raise HTTPException(
@@ -46,14 +53,17 @@ def _raise_support_error(error: Exception) -> NoReturn:
         ) from None
     if isinstance(error, SupportSessionInvalid):
         raise HTTPException(
-            status_code=401, detail="Guest session is missing or invalid."
+            status_code=401,
+            detail={"code": "SESSION_NOT_FOUND", "message": "Guest session is missing or invalid."},
         ) from None
     if isinstance(error, ValueError):
         raise HTTPException(status_code=422, detail=str(error)) from None
     raise error
 
 
-@router.post("/review", response_model=SupportReviewPublic)
+@router.post(
+    "/review", response_model=SupportReviewPublic, responses=api_error_responses(401, 403, 422)
+)
 async def review_support_inquiry(
     request: SupportReviewRequest,
     _: Annotated[None, Depends(require_quotation_origin)],
@@ -66,7 +76,15 @@ async def review_support_inquiry(
         _raise_support_error(error)
 
 
-@router.post("/inquiries", response_model=SupportInquiryPublic, status_code=201)
+@router.post(
+    "/inquiries",
+    response_model=SupportInquiryPublic,
+    status_code=201,
+    responses={
+        200: {"model": SupportInquiryPublic, "description": "Committed idempotent replay."},
+        **api_error_responses(401, 403, 409),
+    },
+)
 async def submit_support_inquiry(
     request: SupportSubmitRequest,
     response: Response,
@@ -89,7 +107,11 @@ async def submit_support_inquiry(
         _raise_support_error(error)
 
 
-@router.get("/inquiries/reconcile/{operation_id}", response_model=SupportInquiryPublic)
+@router.get(
+    "/inquiries/reconcile/{operation_id}",
+    response_model=SupportInquiryPublic,
+    responses=api_error_responses(401, 404),
+)
 async def reconcile_support_inquiry(
     operation_id: UUID,
     guest: Annotated[GuestContext, Depends(get_guest_context)],

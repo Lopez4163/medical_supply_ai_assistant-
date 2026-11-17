@@ -6,14 +6,22 @@ from typing import Annotated
 from urllib.parse import urlsplit
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
+from fastapi.security import APIKeyCookie
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.errors import api_error_responses
 from app.core.settings import Settings, get_settings
 from app.db.session import get_db_session
 from app.schemas.sessions import GuestSessionPublic, SessionBootstrapResponse
 from app.services.sessions import GuestContext, InvalidGuestSession, SessionService
 
 router = APIRouter(prefix="/sessions", tags=["sessions"])
+
+# This dependency documents the opaque guest cookie in OpenAPI.  The session
+# service remains the authority for validating its value and expiry.
+guest_session_cookie = APIKeyCookie(
+    name="bmh_guest", scheme_name="GuestSessionCookie", auto_error=False
+)
 
 
 def get_session_service(
@@ -23,10 +31,13 @@ def get_session_service(
     return SessionService(session, settings)
 
 
-async def require_same_origin(request: Request) -> None:
-    """Reject cross-origin browser bootstraps; future cookie mutations reuse this boundary."""
-    origin = request.headers.get("origin")
-    if origin is not None and origin != f"{request.url.scheme}://{request.url.netloc}":
+async def require_same_origin(
+    request: Request,
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> None:
+    """Require one configured Origin before a browser session cookie is created or renewed."""
+    origins = request.headers.getlist("origin")
+    if len(origins) != 1 or origins[0] not in settings.quotation_trusted_origins:
         raise HTTPException(status_code=403, detail="Cross-origin request is not allowed.")
 
 
@@ -55,6 +66,7 @@ async def require_quotation_origin(
 
 async def get_guest_context(
     request: Request,
+    _: Annotated[str | None, Depends(guest_session_cookie)],
     service: Annotated[SessionService, Depends(get_session_service)],
     settings: Annotated[Settings, Depends(get_settings)],
     session: Annotated[AsyncSession, Depends(get_db_session)],
@@ -69,11 +81,19 @@ async def get_guest_context(
         return context
     except InvalidGuestSession:
         raise HTTPException(
-            status_code=401, detail="Guest session is missing or invalid."
+            status_code=401,
+            detail={"code": "SESSION_NOT_FOUND", "message": "Guest session is missing or invalid."},
         ) from None
 
 
-@router.post("", response_model=SessionBootstrapResponse)
+@router.post(
+    "",
+    response_model=SessionBootstrapResponse,
+    responses={
+        201: {"model": SessionBootstrapResponse, "description": "A new guest session was created."},
+        **api_error_responses(403),
+    },
+)
 async def bootstrap_session(
     request: Request,
     response: Response,
@@ -102,7 +122,7 @@ async def bootstrap_session(
     )
 
 
-@router.get("/current", response_model=GuestSessionPublic)
+@router.get("/current", response_model=GuestSessionPublic, responses=api_error_responses(401))
 async def get_current_session(
     guest: Annotated[GuestContext, Depends(get_guest_context)],
 ) -> GuestSessionPublic:

@@ -64,7 +64,11 @@ async def client_session_and_service() -> AsyncIterator[
         try:
             await seed_catalog(session)
             transport = httpx.ASGITransport(app=app)
-            async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+            async with httpx.AsyncClient(
+                transport=transport,
+                base_url="http://test",
+                headers={"Origin": "http://test"},
+            ) as client:
                 yield client, session, ConversationService(session)
         finally:
             app.dependency_overrides.clear()
@@ -211,7 +215,8 @@ async def test_malformed_guest_cookie_cannot_retrieve_history(
     )
 
     assert response.status_code == 401
-    assert response.json() == {"detail": "Guest session is missing or invalid."}
+    assert response.json()["error"]["code"] == "SESSION_NOT_FOUND"
+    assert response.json()["error"]["message"] == "Guest session is missing or invalid."
     assert "not-a-valid-opaque-session-token" not in response.text
 
 
@@ -224,7 +229,9 @@ async def test_second_guest_cannot_select_the_first_guests_history(
     assert first_bootstrap.status_code == 201
 
     second_client = httpx.AsyncClient(
-        transport=httpx.ASGITransport(app=app), base_url="http://test"
+        transport=httpx.ASGITransport(app=app),
+        base_url="http://test",
+        headers={"Origin": "http://test"},
     )
     try:
         second_bootstrap = await second_client.post("/api/v1/sessions")
@@ -378,7 +385,13 @@ async def test_invalid_stored_elements_and_schema_versions_fail_safely(
     await invalid_version_transaction.rollback()
 
     assert invalid_element.status_code == invalid_version.status_code == 500
-    assert invalid_element.json()["detail"] == "Conversation history is unavailable."
+    assert invalid_element.json()["error"] == {
+        "code": "AI_UNAVAILABLE",
+        "message": "Conversation history is unavailable.",
+        "request_id": invalid_element.headers["x-request-id"],
+        "retryable": False,
+        "details": None,
+    }
 
 
 @pytest.mark.asyncio

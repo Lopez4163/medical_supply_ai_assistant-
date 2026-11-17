@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.v1.sessions import get_guest_context
+from app.core.errors import api_error_responses
 from app.db.session import get_db_session
 from app.schemas.conversations import ConversationHistoryResponse
 from app.services.conversations import (
@@ -26,7 +27,11 @@ def get_conversation_service(
     return ConversationService(session)
 
 
-@router.get("/current", response_model=ConversationHistoryResponse)
+@router.get(
+    "/current",
+    response_model=ConversationHistoryResponse,
+    responses=api_error_responses(401, 404, 500),
+)
 async def get_current_conversation(
     guest: Annotated[GuestContext, Depends(get_guest_context)],
     service: Annotated[ConversationService, Depends(get_conversation_service)],
