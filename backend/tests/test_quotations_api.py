@@ -359,7 +359,7 @@ async def test_mutations_require_one_configured_origin_and_return_a_version_code
     assert (await client.post("/api/v1/quotations/draft/lines", json=payload)).status_code == 200
     conflict = await client.post("/api/v1/quotations/draft/lines", json=_add_payload(version=0))
     assert conflict.status_code == 409
-    assert conflict.json()["detail"]["code"] == "QUOTE_VERSION_CONFLICT"
+    assert conflict.json()["error"]["code"] == "QUOTE_VERSION_CONFLICT"
 
 
 @pytest.mark.asyncio

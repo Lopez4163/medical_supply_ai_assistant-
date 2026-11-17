@@ -12,6 +12,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.errors import api_error_responses
 from app.core.settings import get_settings
 from app.db.session import get_db_session
 from app.schemas.products import (
@@ -227,7 +228,7 @@ def _availability_message(check: InventoryCheck) -> str:
     return "The requested quantity is not currently available."
 
 
-@router.get("/search", response_model=ProductSearchResponse)
+@router.get("/search", response_model=ProductSearchResponse, responses=api_error_responses(422))
 async def search_products(
     q: Annotated[str | None, Query(max_length=200)] = None,
     sku: Annotated[str | None, Query(max_length=64)] = None,
@@ -288,7 +289,7 @@ async def search_products(
     )
 
 
-@router.get("/{sku}", response_model=ProductDetailPublic)
+@router.get("/{sku}", response_model=ProductDetailPublic, responses=api_error_responses(404))
 async def get_product(
     sku: str,
     session: AsyncSession = Depends(get_db_session),
@@ -308,7 +309,9 @@ async def get_product(
     )
 
 
-@router.post("/availability", response_model=AvailabilityResponse)
+@router.post(
+    "/availability", response_model=AvailabilityResponse, responses=api_error_responses(404, 422)
+)
 async def check_product_availability(
     request: AvailabilityRequest,
     session: AsyncSession = Depends(get_db_session),
