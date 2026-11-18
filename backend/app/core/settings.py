@@ -32,6 +32,7 @@ class Settings(BaseSettings):
     session_token_hash_secret: SecretStr
     guest_session_inactivity_days: int = 7
     trusted_origins: str = "http://localhost:3000,http://localhost:8000"
+    chat_provider: Literal["mock", "langgraph"] = "mock"
     welcome_message: str = (
         "Welcome to BioMedicHospicare's AI Supply Assistant! I can help you explore our "
         "demonstration medical-supply catalog, check availability, and prepare a quotation "
@@ -55,9 +56,12 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def reject_production_secret_placeholders(self) -> Self:
-        """Prevent documented and obvious development secrets from reaching production."""
+        """Prevent development-only settings from reaching production."""
         if self.app_environment != "production":
             return self
+
+        if self.chat_provider == "mock":
+            raise ValueError("CHAT_PROVIDER=mock is not permitted in production.")
 
         normalized_secret = self.session_token_hash_secret.get_secret_value().strip().casefold()
         if any(marker in normalized_secret for marker in _PRODUCTION_SECRET_PLACEHOLDER_MARKERS):

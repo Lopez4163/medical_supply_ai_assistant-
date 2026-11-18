@@ -129,6 +129,30 @@ class ConversationService:
         await self._session.flush()
         return self._to_public_message(message)
 
+    async def get_completed_turn(
+        self, *, guest: GuestContext, client_message_id: UUID, lock: bool = False
+    ) -> tuple[ConversationMessagePublic, ConversationMessagePublic] | None:
+        """Return the persisted user/assistant pair for a safe client-message replay."""
+        conversation = await self._get_scoped_conversation(guest=guest, lock=lock)
+        user = await self._session.scalar(
+            select(ConversationMessage).where(
+                ConversationMessage.conversation_id == conversation.id,
+                ConversationMessage.client_message_id == client_message_id,
+            )
+        )
+        if user is None:
+            return None
+        assistant = await self._session.scalar(
+            select(ConversationMessage).where(
+                ConversationMessage.conversation_id == conversation.id,
+                ConversationMessage.server_ordinal == user.server_ordinal + 1,
+                ConversationMessage.role == "assistant",
+            )
+        )
+        if assistant is None:
+            return None
+        return self._to_public_message(user), self._to_public_message(assistant)
+
     async def _get_scoped_conversation(
         self, *, guest: GuestContext, lock: bool = False
     ) -> Conversation:

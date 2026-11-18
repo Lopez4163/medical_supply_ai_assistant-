@@ -42,6 +42,7 @@ def test_production_rejects_obvious_session_secret_placeholders(secret: str) -> 
         Settings(
             database_url="postgresql+psycopg://localhost/medical_supply",
             app_environment="production",
+            chat_provider="langgraph",
             session_token_hash_secret=SecretStr(secret),
         )
 
@@ -50,11 +51,22 @@ def test_production_uses_a_secure_host_only_cookie_name() -> None:
     settings = Settings(
         database_url="postgresql+psycopg://localhost/medical_supply",
         app_environment="production",
+        chat_provider="langgraph",
         session_token_hash_secret=SecretStr("ConfigValidationValue7281946350zxyKLMNPQ"),
     )
 
     assert settings.guest_session_cookie_name == "__Host-bmh_guest"
     assert settings.guest_session_cookie_secure is True
+
+
+def test_production_rejects_the_development_only_mock_chat_provider() -> None:
+    with pytest.raises(ValidationError, match="CHAT_PROVIDER=mock"):
+        Settings(
+            database_url="postgresql+psycopg://localhost/medical_supply",
+            app_environment="production",
+            chat_provider="mock",
+            session_token_hash_secret=SecretStr("ConfigValidationValue7281946350zxyKLMNPQ"),
+        )
 
 
 @pytest.mark.parametrize("environment", ["development", "test"])
