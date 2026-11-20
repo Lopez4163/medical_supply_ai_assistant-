@@ -16,6 +16,7 @@
     "check:api-types": "npm run generate:api-types && git diff --exit-code -- src/lib/api/generated.ts ../backend/openapi.json"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.108.2",
     "next": "16.4.5",
     "react": "19.3.1",
     "react-dom": "19.3.1"

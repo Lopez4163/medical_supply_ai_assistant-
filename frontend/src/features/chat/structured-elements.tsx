@@ -1,0 +1,88 @@
+import type { ConversationMessagePublic } from "@/lib/api/client";
+
+type StructuredElementsProps = {
+  elements: ConversationMessagePublic["elements"];
+};
+
+export function StructuredElements({ elements }: StructuredElementsProps) {
+  return (
+    <div className="mt-3 space-y-3">
+      {elements.map((element, index) => {
+        switch (element.kind) {
+          case "product_results":
+            return (
+              <section
+                aria-label="Product results"
+                className="rounded-md border border-slate-200 p-3"
+                key={`${element.kind}-${index}`}
+              >
+                <p className="text-sm font-medium text-slate-800">Product results</p>
+                <ul className="mt-2 space-y-2">
+                  {element.result_set.products.slice(0, 5).map((product) => (
+                    <li className="text-sm text-slate-700" key={product.sku}>
+                      {product.name} · {product.sku} · {product.indicative_price_usd} ·{" "}
+                      {product.availability}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            );
+          case "inventory_notice":
+            return (
+              <p
+                className="rounded-md bg-amber-50 p-3 text-sm text-amber-900"
+                key={`${element.kind}-${index}`}
+              >
+                {element.notice.message}
+              </p>
+            );
+          case "quote_update":
+            return (
+              <p
+                className="rounded-md bg-sky-50 p-3 text-sm text-sky-900"
+                key={`${element.kind}-${index}`}
+              >
+                Your quotation draft was updated.
+              </p>
+            );
+          case "confirmation_prompt":
+            return (
+              <section
+                className="rounded-md border border-slate-200 p-3"
+                key={`${element.kind}-${index}`}
+              >
+                <p className="font-medium text-slate-800">{element.prompt.title}</p>
+                <p className="mt-1 text-sm text-slate-700">{element.prompt.message}</p>
+                <p className="mt-2 text-sm text-slate-500">
+                  {element.prompt.confirm_label} will be available in a later step.
+                </p>
+              </section>
+            );
+          case "source_reference":
+            return (
+              <aside
+                className="rounded-md bg-slate-100 p-3 text-sm text-slate-700"
+                key={`${element.kind}-${index}`}
+              >
+                <p className="font-medium">Source: {element.source.title}</p>
+                <p className="mt-1">{element.source.excerpt}</p>
+              </aside>
+            );
+          case "support_inquiry_form":
+            return (
+              <section
+                className="rounded-md border border-slate-200 p-3"
+                key={`${element.kind}-${index}`}
+              >
+                <p className="font-medium text-slate-800">{element.form.title}</p>
+                <p className="mt-1 text-sm text-slate-700">{element.form.description}</p>
+                <p className="mt-2 text-sm text-slate-500">
+                  Support forms will be available in a later step.
+                </p>
+              </section>
+            );
+        }
+      })}
+    </div>
+  );
+}
