@@ -30,7 +30,7 @@ describe("bootstrapGuestSession", () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(null, { status: 401 })));
 
     await expect(bootstrapGuestSession()).rejects.toMatchObject({
-      message: "Unable to start a guest session.",
+      message: "The API request could not be completed.",
       name: "ApiClientError",
       status: 401,
     } satisfies Partial<ApiClientError>);
