@@ -137,6 +137,55 @@ async def test_bootstrap_rejects_cross_origin_requests(
 
 
 @pytest.mark.asyncio
+async def test_cors_allows_configured_credentialed_origins_and_required_methods(
+    client_and_session: tuple[httpx.AsyncClient, AsyncSession],
+) -> None:
+    client, _session = client_and_session
+    origin = "http://frontend.test"
+
+    bootstrap = await client.post("/api/v1/sessions", headers={"Origin": origin})
+    patch_preflight = await client.options(
+        "/api/v1/quotations/draft/lines/example",
+        headers={
+            "Origin": origin,
+            "Access-Control-Request-Method": "PATCH",
+            "Access-Control-Request-Headers": "content-type,x-request-id",
+        },
+    )
+    delete_preflight = await client.options(
+        "/api/v1/quotations/draft/lines/example",
+        headers={"Origin": origin, "Access-Control-Request-Method": "DELETE"},
+    )
+
+    assert bootstrap.status_code == 201
+    assert bootstrap.headers["access-control-allow-origin"] == origin
+    assert bootstrap.headers["access-control-allow-credentials"] == "true"
+    assert patch_preflight.status_code == delete_preflight.status_code == 200
+    assert patch_preflight.headers["access-control-allow-origin"] == origin
+    assert patch_preflight.headers["access-control-allow-credentials"] == "true"
+    assert "PATCH" in patch_preflight.headers["access-control-allow-methods"]
+    assert "DELETE" in delete_preflight.headers["access-control-allow-methods"]
+
+
+@pytest.mark.asyncio
+async def test_cors_rejects_untrusted_origins_without_credentialed_response_headers(
+    client_and_session: tuple[httpx.AsyncClient, AsyncSession],
+) -> None:
+    client, _session = client_and_session
+
+    preflight = await client.options(
+        "/api/v1/sessions",
+        headers={"Origin": "https://attacker.test", "Access-Control-Request-Method": "POST"},
+    )
+    mutation = await client.post("/api/v1/sessions", headers={"Origin": "https://attacker.test"})
+
+    assert preflight.status_code == 400
+    assert "access-control-allow-origin" not in preflight.headers
+    assert mutation.status_code == 403
+    assert "access-control-allow-origin" not in mutation.headers
+
+
+@pytest.mark.asyncio
 async def test_bootstrap_uses_configured_frontend_origins_not_the_backend_host(
     client_and_session: tuple[httpx.AsyncClient, AsyncSession],
     monkeypatch: pytest.MonkeyPatch,
