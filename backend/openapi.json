@@ -856,10 +856,20 @@
       },
       "ProductResultsElement": {
         "additionalProperties": false,
+        "description": "A bounded product batch with an explicit server-defined display context.",
         "properties": {
           "kind": {
             "const": "product_results",
             "title": "Kind",
+            "type": "string"
+          },
+          "result_context": {
+            "default": "search",
+            "enum": [
+              "search",
+              "alternatives"
+            ],
+            "title": "Result Context",
             "type": "string"
           },
           "result_set": {

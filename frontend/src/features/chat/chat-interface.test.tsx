@@ -76,12 +76,21 @@ describe("ChatInterface", () => {
             elements: [
               {
                 kind: "product_results",
+                result_context: "search",
                 result_set: {
                   products: [
                     {
                       sku: "PPE-NIT-M",
+                      product_id: "nitrile-gloves",
                       name: "Nitrile Gloves",
+                      category_code: "PPE",
+                      category_name: "Personal protective equipment",
+                      sales_unit: "Box of 100",
                       indicative_price_usd: "12.00",
+                      lifecycle_status: "active",
+                      selector_attributes: { size: "Medium" },
+                      primary_image_reference: null,
+                      image_fallback_key: "PPE fallback",
                       availability: "in_stock",
                     },
                   ],
@@ -131,6 +140,8 @@ describe("ChatInterface", () => {
 
     expect(await screen.findByText("Here is what I found.")).toBeInTheDocument();
     expect(screen.getByText(/Nitrile Gloves/)).toBeInTheDocument();
+    expect(screen.getByText("Availability snapshot:")).toBeInTheDocument();
+    expect(screen.queryByText(/Current categorical availability:/)).not.toBeInTheDocument();
     expect(screen.getByText("Availability is limited.")).toBeInTheDocument();
     expect(screen.getByText("Your quotation draft was updated.")).toBeInTheDocument();
     expect(screen.getByText("Review quote")).toBeInTheDocument();
@@ -337,6 +348,180 @@ describe("ChatInterface", () => {
 
     expect(retryBody.client_message_id).toBe(firstBody.client_message_id);
     expect(screen.getAllByText("Find gloves")).toHaveLength(1);
+  });
+
+  it("continues product results with the opaque chat cursor and exact Show More command", async () => {
+    const product = {
+      sku: "PPE-NIT-M",
+      product_id: "nitrile-gloves",
+      name: "Nitrile Gloves",
+      category_code: "PPE",
+      category_name: "Personal protective equipment",
+      sales_unit: "Box of 100",
+      indicative_price_usd: "12.00",
+      lifecycle_status: "active",
+      selector_attributes: { size: "Medium" },
+      primary_image_reference: null,
+      image_fallback_key: "PPE fallback",
+      availability: "in_stock",
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        historyResponse([
+          message({
+            id: "results-1",
+            ordinal: 1,
+            text: "First product batch.",
+            elements: [
+              {
+                kind: "product_results",
+                result_context: "search",
+                result_set: { products: [product], next_cursor: "opaque-chat-cursor" },
+              },
+            ],
+          }),
+        ]),
+      )
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            conversation_id: sessionState.session.conversation_id,
+            client_message_id: "show-more-id",
+            user_message: message({ id: "user-more", ordinal: 2, role: "user", text: "show more" }),
+            assistant_message: message({
+              id: "results-2",
+              ordinal: 3,
+              text: "Second product batch.",
+              elements: [
+                {
+                  kind: "product_results",
+                  result_context: "search",
+                  result_set: {
+                    products: [{ ...product, sku: "PPE-NIT-L", name: "Large Nitrile Gloves" }],
+                    next_cursor: null,
+                  },
+                },
+              ],
+            }),
+            elements: [
+              {
+                kind: "product_results",
+                result_context: "search",
+                result_set: {
+                  products: [{ ...product, sku: "PPE-NIT-L", name: "Large Nitrile Gloves" }],
+                  next_cursor: null,
+                },
+              },
+            ],
+            draft_changed: false,
+            request_id: "request-id",
+          }),
+          { status: 200 },
+        ),
+      );
+    vi.stubGlobal("fetch", fetchMock);
+    renderChat();
+
+    await screen.findByText("First product batch.");
+    fireEvent.click(screen.getByRole("button", { name: "Show more products" }));
+    await screen.findByText("Second product batch.");
+
+    expect(JSON.parse(String(fetchMock.mock.calls[1]?.[1]?.body))).toMatchObject({
+      cursor: "opaque-chat-cursor",
+      text: "show more",
+    });
+    expect(screen.getByText("Nitrile Gloves")).toBeInTheDocument();
+    expect(screen.getByText("Large Nitrile Gloves")).toBeInTheDocument();
+    expect(screen.getAllByText("Nitrile Gloves")).toHaveLength(1);
+  });
+
+  it("uses the structured alternatives context to limit compatible alternatives", async () => {
+    const products = Array.from({ length: 5 }, (_, index) => ({
+      sku: `ALT-${index}`,
+      product_id: `alternative-${index}`,
+      name: `Alternative ${index}`,
+      category_code: "PPE",
+      category_name: "Personal protective equipment",
+      sales_unit: "Box of 100",
+      indicative_price_usd: "12.00",
+      lifecycle_status: "active",
+      selector_attributes: {},
+      primary_image_reference: null,
+      image_fallback_key: "PPE fallback",
+      availability: "in_stock",
+    }));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        historyResponse([
+          message({
+            id: "alternatives",
+            ordinal: 1,
+            text: "Here are compatible choices.",
+            elements: [
+              {
+                kind: "product_results",
+                result_context: "alternatives",
+                result_set: { products, next_cursor: null },
+              },
+            ],
+          }),
+        ]),
+      ),
+    );
+    renderChat();
+
+    expect(await screen.findByText("Alternative 0")).toBeInTheDocument();
+    expect(screen.getByText("Alternative 2")).toBeInTheDocument();
+    expect(screen.queryByText("Alternative 3")).not.toBeInTheDocument();
+  });
+
+  it("handles a rejected or expired product cursor as a definite failure", async () => {
+    const product = {
+      sku: "PPE-NIT-M",
+      product_id: "nitrile-gloves",
+      name: "Nitrile Gloves",
+      category_code: "PPE",
+      category_name: "Personal protective equipment",
+      sales_unit: "Box of 100",
+      indicative_price_usd: "12.00",
+      lifecycle_status: "active",
+      selector_attributes: { size: "Medium" },
+      primary_image_reference: null,
+      image_fallback_key: "PPE fallback",
+      availability: "in_stock",
+    };
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValueOnce(
+          historyResponse([
+            message({
+              id: "results-1",
+              ordinal: 1,
+              text: "First product batch.",
+              elements: [
+                {
+                  kind: "product_results",
+                  result_context: "search",
+                  result_set: { products: [product], next_cursor: "expired-cursor" },
+                },
+              ],
+            }),
+          ]),
+        )
+        .mockResolvedValueOnce(new Response(null, { status: 422 })),
+    );
+    renderChat();
+
+    await screen.findByText("First product batch.");
+    fireEvent.click(screen.getByRole("button", { name: "Show more products" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(/message was not accepted/i);
+    expect(screen.queryByRole("button", { name: "Retry message" })).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Message the AI Supply Assistant")).not.toBeDisabled();
   });
 
   it("renders an accessible expiration error and disables sending", async () => {

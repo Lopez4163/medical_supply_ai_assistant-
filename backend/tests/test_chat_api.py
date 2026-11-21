@@ -80,6 +80,7 @@ async def test_chat_persists_search_turn_replays_client_id_and_keeps_inventory_p
     assert first.status_code == replay.status_code == 200
     assert replay.json() == first.json()
     assert first.json()["elements"][0]["kind"] == "product_results"
+    assert first.json()["elements"][0]["result_context"] == "search"
     assert len(first.json()["elements"][0]["result_set"]["products"]) <= 5
     assert "quantity_on_hand" not in first.text
     assert [message["ordinal"] for message in history.json()["messages"]] == [0, 1, 2]
@@ -230,6 +231,10 @@ async def test_chat_returns_inventory_alternatives_and_safe_guidance(
         == fallback.status_code
         == 200
     )
+    alternative_results = alternatives.json()["elements"][0]
+    assert alternative_results["kind"] == "product_results"
+    assert alternative_results["result_context"] == "alternatives"
+    assert len(alternative_results["result_set"]["products"]) <= 3
     assert support.json()["elements"][0]["kind"] == "support_inquiry_form"
     assert company.json()["elements"] == [] and fallback.json()["elements"] == []
     assert await session.scalar(select(func.count()).select_from(QuoteSubmission)) == 0

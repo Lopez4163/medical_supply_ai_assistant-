@@ -269,6 +269,7 @@ class MockChatService:
             [
                 ProductResultsElement(
                     kind="product_results",
+                    result_context="search",
                     result_set=ProductSearchResponse(products=cards, next_cursor=next_cursor),
                 )
             ],
@@ -316,7 +317,9 @@ class MockChatService:
         alternatives = await CatalogService(self._session).find_alternatives(
             sku=sku, quantity=quantity
         )
-        cards = [await self._card(alternative.variant) for alternative in alternatives[:5]]
+        # Alternatives are already compatibility- and quantity-filtered by CatalogService.
+        # Keep the approved public cap at three regardless of a future provider's wording.
+        cards = [await self._card(alternative.variant) for alternative in alternatives[:3]]
         if not cards:
             return (
                 "I could not find a suitable categorical-availability alternative for "
@@ -330,6 +333,7 @@ class MockChatService:
             [
                 ProductResultsElement(
                     kind="product_results",
+                    result_context="alternatives",
                     result_set=ProductSearchResponse(products=cards, next_cursor=None),
                 )
             ],

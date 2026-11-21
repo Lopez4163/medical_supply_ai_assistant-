@@ -42,7 +42,12 @@ function ActiveChat({ conversationId }: ActiveChatProps) {
           </div>
         ) : null}
         {!chat.isRestoring && !chat.restoreError ? (
-          <MessageList messages={chat.messages} pendingMessage={chat.pendingMessage} />
+          <MessageList
+            conversationId={conversationId}
+            messages={chat.messages}
+            onShowMore={chat.showMore}
+            pendingMessage={chat.pendingMessage}
+          />
         ) : null}
       </section>
       {chat.recoveryError ? (

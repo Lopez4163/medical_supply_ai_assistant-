@@ -48,7 +48,10 @@ class SupportInquiryFormSnapshot(_StrictPublicModel):
 
 
 class ProductResultsElement(_StrictPublicModel):
+    """A bounded product batch with an explicit server-defined display context."""
+
     kind: Literal["product_results"]
+    result_context: Literal["search", "alternatives"] = "search"
     result_set: ProductSearchResponse
 
 

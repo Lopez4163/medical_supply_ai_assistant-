@@ -1,31 +1,37 @@
 import type { ConversationMessagePublic } from "@/lib/api/client";
 
+import { ProductResults } from "@/features/products/product-results";
+
 type StructuredElementsProps = {
+  conversationId: string;
   elements: ConversationMessagePublic["elements"];
+  onShowMore: (cursor: string) => void;
 };
 
-export function StructuredElements({ elements }: StructuredElementsProps) {
+export function StructuredElements({
+  conversationId,
+  elements,
+  onShowMore,
+}: StructuredElementsProps) {
   return (
     <div className="mt-3 space-y-3">
       {elements.map((element, index) => {
         switch (element.kind) {
           case "product_results":
             return (
-              <section
-                aria-label="Product results"
+              <div
                 className="rounded-md border border-slate-200 p-3"
                 key={`${element.kind}-${index}`}
               >
-                <p className="text-sm font-medium text-slate-800">Product results</p>
-                <ul className="mt-2 space-y-2">
-                  {element.result_set.products.slice(0, 5).map((product) => (
-                    <li className="text-sm text-slate-700" key={product.sku}>
-                      {product.name} · {product.sku} · {product.indicative_price_usd} ·{" "}
-                      {product.availability}
-                    </li>
-                  ))}
-                </ul>
-              </section>
+                <p className="mb-2 text-sm font-medium text-slate-800">Product results</p>
+                <ProductResults
+                  conversationId={conversationId}
+                  nextCursor={element.result_set.next_cursor}
+                  onShowMore={onShowMore}
+                  products={element.result_set.products}
+                  resultContext={element.result_context ?? "search"}
+                />
+              </div>
             );
           case "inventory_notice":
             return (

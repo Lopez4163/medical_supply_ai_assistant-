@@ -685,13 +685,22 @@ export interface components {
             /** Sku */
             sku: string;
         };
-        /** ProductResultsElement */
+        /**
+         * ProductResultsElement
+         * @description A bounded product batch with an explicit server-defined display context.
+         */
         ProductResultsElement: {
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
             kind: "product_results";
+            /**
+             * Result Context
+             * @default search
+             * @enum {string}
+             */
+            result_context: "search" | "alternatives";
             result_set: components["schemas"]["ProductSearchResponse"];
         };
         /** ProductSearchResponse */

@@ -15,6 +15,7 @@ export type PendingChatMessage = {
   conversationId: string;
   clientMessageId: string;
   text: string;
+  cursor?: string;
 };
 
 export type ChatRecoveryError = {
@@ -105,7 +106,11 @@ export function useChat({ conversationId }: UseChatOptions) {
 
   const mutation = useMutation({
     mutationFn: (message: PendingChatMessage) =>
-      sendChatMessage({ client_message_id: message.clientMessageId, text: message.text }),
+      sendChatMessage({
+        client_message_id: message.clientMessageId,
+        text: message.text,
+        cursor: message.cursor,
+      }),
     onSuccess: async (response, operation) => {
       queryClient.setQueryData(
         queryKeys.conversation(operation.conversationId),
@@ -133,7 +138,7 @@ export function useChat({ conversationId }: UseChatOptions) {
   });
 
   const sendMessage = useCallback(
-    (text: string) => {
+    (text: string, cursor?: string) => {
       const normalizedText = text.trim();
       if (!normalizedText || mutation.isPending || pendingMessage) {
         return;
@@ -142,6 +147,7 @@ export function useChat({ conversationId }: UseChatOptions) {
         conversationId,
         clientMessageId: createClientMessageId(),
         text: normalizedText,
+        cursor,
       };
       setPendingMessage(message);
       setRecoveryError(null);
@@ -158,6 +164,13 @@ export function useChat({ conversationId }: UseChatOptions) {
     mutation.mutate(pendingMessage);
   }, [mutation, pendingMessage, recoveryError]);
 
+  const showMore = useCallback(
+    (cursor: string) => {
+      sendMessage("show more", cursor);
+    },
+    [sendMessage],
+  );
+
   const messages = useMemo(() => historyQuery.data?.messages ?? [], [historyQuery.data]);
   return {
     messages,
@@ -167,6 +180,7 @@ export function useChat({ conversationId }: UseChatOptions) {
     isSending: mutation.isPending,
     recoveryError,
     sendMessage,
+    showMore,
     retry,
     refreshHistory: historyQuery.refetch,
   };

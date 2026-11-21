@@ -6,8 +6,10 @@ import { StructuredElements } from "./structured-elements";
 import type { PendingChatMessage } from "./use-chat";
 
 type MessageListProps = {
+  conversationId: string;
   messages: ConversationMessagePublic[];
   pendingMessage: PendingChatMessage | null;
+  onShowMore: (cursor: string) => void;
 };
 
 function timestamp(value: string): string {
@@ -16,7 +18,12 @@ function timestamp(value: string): string {
   );
 }
 
-export function MessageList({ messages, pendingMessage }: MessageListProps) {
+export function MessageList({
+  conversationId,
+  messages,
+  onShowMore,
+  pendingMessage,
+}: MessageListProps) {
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,7 +47,13 @@ export function MessageList({ messages, pendingMessage }: MessageListProps) {
           key={message.id}
         >
           <p className="whitespace-pre-wrap leading-7">{message.text}</p>
-          {message.role === "assistant" ? <StructuredElements elements={message.elements} /> : null}
+          {message.role === "assistant" ? (
+            <StructuredElements
+              conversationId={conversationId}
+              elements={message.elements}
+              onShowMore={onShowMore}
+            />
+          ) : null}
           <time
             aria-label={`Sent at ${timestamp(message.created_at)}`}
             className={

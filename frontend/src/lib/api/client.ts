@@ -5,6 +5,8 @@ export type ConversationHistoryResponse = components["schemas"]["ConversationHis
 export type ConversationMessagePublic = components["schemas"]["ConversationMessagePublic"];
 export type ChatTurnRequest = components["schemas"]["ChatTurnRequest"];
 export type ChatTurnResponse = components["schemas"]["ChatTurnResponse"];
+export type ProductCardPublic = components["schemas"]["ProductCardPublic"];
+export type ProductDetailPublic = components["schemas"]["ProductDetailPublic"];
 
 export class ApiClientError extends Error {
   public constructor(
@@ -46,6 +48,13 @@ export async function getCurrentConversation(
   signal?: AbortSignal,
 ): Promise<ConversationHistoryResponse> {
   return requestJson<ConversationHistoryResponse>("/conversations/current", {
+    method: "GET",
+    signal,
+  });
+}
+
+export async function getProduct(sku: string, signal?: AbortSignal): Promise<ProductDetailPublic> {
+  return requestJson<ProductDetailPublic>(`/products/${encodeURIComponent(sku)}`, {
     method: "GET",
     signal,
   });
