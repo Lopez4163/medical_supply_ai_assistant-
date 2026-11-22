@@ -9,9 +9,13 @@ from app.models.catalog import (
     SkuCompatibility,
     SkuVariant,
 )
+from app.models.conversation import Conversation, ConversationMessage, GuestSession
 
 __all__ = [
     "CompatibilityState",
+    "Conversation",
+    "ConversationMessage",
+    "GuestSession",
     "ImageProvenanceStatus",
     "InventoryItem",
     "ProductCategory",

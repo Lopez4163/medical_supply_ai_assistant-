@@ -1,11 +1,20 @@
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal, Self
 
-from pydantic import field_validator
+from pydantic import SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.engine import make_url
 
 BACKEND_DIRECTORY = Path(__file__).resolve().parents[2]
+_PRODUCTION_SECRET_PLACEHOLDER_MARKERS = (
+    "replace-with",
+    "change-me",
+    "example",
+    "placeholder",
+    "development",
+    "test-secret",
+)
 
 
 class Settings(BaseSettings):
@@ -18,6 +27,14 @@ class Settings(BaseSettings):
     )
 
     database_url: str
+    app_environment: Literal["development", "test", "production"] = "development"
+    session_token_hash_secret: SecretStr
+    guest_session_inactivity_days: int = 7
+    welcome_message: str = (
+        "Welcome to BioMedicHospicare's AI Supply Assistant! I can help you explore our "
+        "demonstration medical-supply catalog, check availability, and prepare a quotation "
+        "inquiry. This is a synthetic-data demo, not a live ordering service."
+    )
 
     @field_validator("database_url")
     @classmethod
@@ -26,6 +43,35 @@ class Settings(BaseSettings):
         if url.drivername != "postgresql+psycopg" or not url.host or not url.database:
             raise ValueError("DATABASE_URL must be a PostgreSQL psycopg connection URL.")
         return value
+
+    @field_validator("session_token_hash_secret")
+    @classmethod
+    def validate_session_token_hash_secret(cls, value: SecretStr) -> SecretStr:
+        if len(value.get_secret_value()) < 32:
+            raise ValueError("SESSION_TOKEN_HASH_SECRET must be at least 32 characters.")
+        return value
+
+    @model_validator(mode="after")
+    def reject_production_secret_placeholders(self) -> Self:
+        """Prevent documented and obvious development secrets from reaching production."""
+        if self.app_environment != "production":
+            return self
+
+        normalized_secret = self.session_token_hash_secret.get_secret_value().strip().casefold()
+        if any(marker in normalized_secret for marker in _PRODUCTION_SECRET_PLACEHOLDER_MARKERS):
+            raise ValueError(
+                "SESSION_TOKEN_HASH_SECRET must not use a development or example placeholder "
+                "in production."
+            )
+        return self
+
+    @property
+    def guest_session_cookie_name(self) -> str:
+        return "__Host-bmh_guest" if self.app_environment == "production" else "bmh_guest"
+
+    @property
+    def guest_session_cookie_secure(self) -> bool:
+        return self.app_environment == "production"
 
 
 @lru_cache
