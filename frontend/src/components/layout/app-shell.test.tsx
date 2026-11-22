@@ -211,9 +211,9 @@ describe("AppShell quotation controller", () => {
     const trigger = screen.getByRole("button", { name: "Quotation (1)" });
     trigger.focus();
     fireEvent.click(trigger);
-    const drawer = screen.getByRole("dialog", { name: "Quotation drawer" });
+    const drawer = screen.getByRole("dialog", { name: "Draft quotation" });
     await waitFor(() => expect(screen.getByRole("button", { name: "Close" })).toHaveFocus());
-    expect(drawer).toHaveClass("w-full", "max-w-md");
+    expect(drawer).toHaveClass("w-full", "max-w-none", "sm:max-w-md");
     fireEvent.keyDown(drawer, { key: "Escape" });
 
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());

@@ -9,12 +9,12 @@ type AppHeaderProps = {
 export function AppHeader({ quotationControl }: AppHeaderProps) {
   return (
     <header className="border-b border-slate-200 bg-white">
-      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6">
-        <div>
+      <div className="mx-auto flex max-w-5xl flex-col gap-3 px-4 py-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4 sm:px-6">
+        <div className="flex-1">
           <p className="font-semibold tracking-tight text-sky-800">BioMedicHospicare</p>
           <h1 className="text-sm text-slate-700">AI Supply Assistant</h1>
         </div>
-        <div className="max-w-sm text-right">
+        <div className="order-3 max-w-sm text-left sm:order-none sm:text-right">
           <DemoDisclosure />
         </div>
         {quotationControl}

@@ -344,6 +344,7 @@ export function QuotationReview({ draft, onCancel, onSubmitted }: QuotationRevie
       <label className="block text-sm">
         Email
         <input
+          aria-describedby={form.formState.errors.email ? "contact-error" : undefined}
           className="mt-1 block w-full rounded border p-2"
           type="email"
           {...form.register("email")}
@@ -358,7 +359,7 @@ export function QuotationReview({ draft, onCancel, onSubmitted }: QuotationRevie
         />
       </label>
       {form.formState.errors.email ? (
-        <p role="alert" className="text-sm text-red-800">
+        <p id="contact-error" role="alert" className="text-sm text-red-800">
           {form.formState.errors.email.message}
         </p>
       ) : null}

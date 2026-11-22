@@ -83,6 +83,7 @@ describe("QuotationReview", () => {
     fireEvent.click(screen.getByRole("button", { name: "Review quotation" }));
 
     expect(await screen.findByText("Enter your first name")).toBeInTheDocument();
+    expect(screen.getByLabelText("Email")).toHaveAttribute("aria-describedby", "contact-error");
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

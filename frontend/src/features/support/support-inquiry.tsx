@@ -324,6 +324,9 @@ export function SupportInquiry({ description, title }: SupportInquiryProps) {
             <label className="block text-sm">
               First name
               <input
+                aria-describedby={
+                  form.formState.errors.first_name ? "support-first-name-error" : undefined
+                }
                 className="mt-1 block w-full rounded border p-2"
                 {...form.register("first_name")}
               />
@@ -331,6 +334,9 @@ export function SupportInquiry({ description, title }: SupportInquiryProps) {
             <label className="block text-sm">
               Last name
               <input
+                aria-describedby={
+                  form.formState.errors.last_name ? "support-last-name-error" : undefined
+                }
                 className="mt-1 block w-full rounded border p-2"
                 {...form.register("last_name")}
               />
@@ -338,6 +344,7 @@ export function SupportInquiry({ description, title }: SupportInquiryProps) {
             <label className="block text-sm">
               Email
               <input
+                aria-describedby={form.formState.errors.email ? "support-contact-error" : undefined}
                 className="mt-1 block w-full rounded border p-2"
                 type="email"
                 {...form.register("email")}
@@ -354,17 +361,17 @@ export function SupportInquiry({ description, title }: SupportInquiryProps) {
           </>
         )}
         {form.formState.errors.first_name ? (
-          <p className="text-sm text-red-800" role="alert">
+          <p className="text-sm text-red-800" id="support-first-name-error" role="alert">
             {form.formState.errors.first_name.message}
           </p>
         ) : null}
         {form.formState.errors.last_name ? (
-          <p className="text-sm text-red-800" role="alert">
+          <p className="text-sm text-red-800" id="support-last-name-error" role="alert">
             {form.formState.errors.last_name.message}
           </p>
         ) : null}
         {form.formState.errors.email ? (
-          <p className="text-sm text-red-800" role="alert">
+          <p className="text-sm text-red-800" id="support-contact-error" role="alert">
             {form.formState.errors.email.message}
           </p>
         ) : null}

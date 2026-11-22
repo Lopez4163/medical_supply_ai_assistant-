@@ -61,6 +61,10 @@ describe("SupportInquiry", () => {
     expect(
       await screen.findByText("Choose to create a synthetic support inquiry"),
     ).toBeInTheDocument();
+    expect(screen.getByLabelText("Email")).toHaveAttribute(
+      "aria-describedby",
+      "support-contact-error",
+    );
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

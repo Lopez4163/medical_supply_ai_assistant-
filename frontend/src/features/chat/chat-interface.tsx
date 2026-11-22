@@ -21,8 +21,8 @@ function ActiveChat({ conversationId, draftController }: ActiveChatProps) {
   return (
     <>
       <section
-        aria-live="polite"
-        className="mx-auto flex w-full max-w-3xl flex-1 items-center px-4 py-8 sm:px-6"
+        aria-busy={chat.isRestoring}
+        className="mx-auto flex w-full max-w-3xl flex-1 items-start px-4 py-6 sm:px-6 sm:py-8"
       >
         {chat.isRestoring ? (
           <p role="status" className="text-sm text-slate-600">

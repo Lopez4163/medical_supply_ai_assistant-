@@ -11,6 +11,8 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:real": "playwright test --config=playwright.real.config.ts",
     "typecheck": "tsc --noEmit",
     "generate:api-types": "cd ../backend && uv run python -m scripts.generate_openapi && cd ../frontend && openapi-typescript ../backend/openapi.json -o src/lib/api/generated.ts",
     "check:api-types": "npm run generate:api-types && git diff --exit-code -- src/lib/api/generated.ts ../backend/openapi.json"
@@ -25,6 +27,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.1",
     "@tailwindcss/postcss": "4.1.18",
     "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "16.3.3",

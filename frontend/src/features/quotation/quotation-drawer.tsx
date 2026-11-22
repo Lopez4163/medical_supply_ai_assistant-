@@ -61,7 +61,8 @@ export function QuotationDrawer({ controller }: QuotationDrawerProps) {
       <aside
         aria-label="Quotation drawer"
         aria-modal="false"
-        className="fixed inset-y-0 right-0 z-20 w-full max-w-md overflow-y-auto border-l border-slate-200 bg-white p-5 shadow-xl"
+        aria-labelledby="quotation-drawer-title"
+        className="fixed inset-y-0 right-0 z-20 w-full max-w-none overflow-y-auto border-l border-slate-200 bg-white p-4 shadow-xl sm:max-w-md sm:p-5"
         id="quotation-drawer"
         hidden={!isOpen}
         onKeyDown={(event) => {
@@ -71,7 +72,9 @@ export function QuotationDrawer({ controller }: QuotationDrawerProps) {
         tabIndex={-1}
       >
         <div className="flex items-center justify-between gap-3">
-          <h2 className="text-lg font-semibold">Draft quotation</h2>
+          <h2 className="text-lg font-semibold" id="quotation-drawer-title">
+            Draft quotation
+          </h2>
           <button
             className="rounded px-2 py-1 underline"
             onClick={closeDrawer}

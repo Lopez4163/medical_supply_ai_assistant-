@@ -36,6 +36,8 @@ export function MessageList({
   return (
     <div
       aria-label="Conversation messages"
+      aria-live="polite"
+      aria-relevant="additions text"
       className="mx-auto w-full max-w-3xl space-y-4"
       role="log"
     >
