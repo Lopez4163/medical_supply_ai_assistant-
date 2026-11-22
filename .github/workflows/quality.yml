@@ -37,6 +37,7 @@ jobs:
     env:
       DATABASE_URL: postgresql+psycopg://ci_user:ci_password@127.0.0.1:5432/medical_supply_test
       TEST_DATABASE_URL: postgresql+psycopg://ci_user:ci_password@127.0.0.1:5432/medical_supply_test
+      SESSION_TOKEN_HASH_SECRET: ci-test-only-session-token-hash-secret-2026
     services:
       postgres:
         image: pgvector/pgvector:0.8.0-pg16
