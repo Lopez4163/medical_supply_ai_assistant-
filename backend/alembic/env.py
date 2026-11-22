@@ -2,6 +2,7 @@ from logging.config import fileConfig
 
 from sqlalchemy import create_engine, pool
 
+import app.models.ai  # noqa: F401
 import app.models.catalog  # noqa: F401
 import app.models.conversation  # noqa: F401
 import app.models.quotation  # noqa: F401

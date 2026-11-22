@@ -1,5 +1,6 @@
 """SQLAlchemy models owned by the application."""
 
+from app.models.ai import AiUsageRecord
 from app.models.catalog import (
     CompatibilityState,
     ImageProvenanceStatus,
@@ -15,6 +16,7 @@ from app.models.support import SupportInquiry, SupportReview
 
 __all__ = [
     "CompatibilityState",
+    "AiUsageRecord",
     "Conversation",
     "ConversationMessage",
     "GuestSession",

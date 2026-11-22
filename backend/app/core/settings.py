@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Literal, Self
 from urllib.parse import urlsplit
 
-from pydantic import SecretStr, field_validator, model_validator
+from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.engine import make_url
 
@@ -33,6 +33,11 @@ class Settings(BaseSettings):
     guest_session_inactivity_days: int = 7
     trusted_origins: str = "http://localhost:3000,http://localhost:8000"
     chat_provider: Literal["mock", "langgraph"] = "mock"
+    openrouter_api_key: SecretStr | None = None
+    openrouter_model: str | None = None
+    openrouter_request_timeout_seconds: float = Field(default=30.0, gt=0, le=120)
+    openrouter_max_output_tokens: int = Field(default=512, gt=0, le=16_384)
+    openrouter_context_limit_tokens: int = Field(default=8_192, gt=0, le=1_000_000)
     welcome_message: str = (
         "Welcome to BioMedicHospicare's AI Supply Assistant! I can help you explore our "
         "demonstration medical-supply catalog, check availability, and prepare a quotation "
@@ -53,6 +58,33 @@ class Settings(BaseSettings):
         if len(value.get_secret_value()) < 32:
             raise ValueError("SESSION_TOKEN_HASH_SECRET must be at least 32 characters.")
         return value
+
+    @field_validator("openrouter_api_key")
+    @classmethod
+    def validate_openrouter_api_key(cls, value: SecretStr | None) -> SecretStr | None:
+        if value is not None and not value.get_secret_value().strip():
+            raise ValueError("OPENROUTER_API_KEY must not be blank.")
+        return value
+
+    @field_validator("openrouter_model")
+    @classmethod
+    def validate_openrouter_model(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        normalized = value.strip()
+        if (
+            not normalized
+            or "/" not in normalized
+            or any(character.isspace() for character in normalized)
+        ):
+            raise ValueError("OPENROUTER_MODEL must be a provider/model identifier.")
+        return normalized
+
+    @model_validator(mode="after")
+    def validate_openrouter_limits(self) -> Self:
+        if self.openrouter_max_output_tokens >= self.openrouter_context_limit_tokens:
+            raise ValueError("OPENROUTER_MAX_OUTPUT_TOKENS must be below the context limit.")
+        return self
 
     @model_validator(mode="after")
     def reject_production_secret_placeholders(self) -> Self:
