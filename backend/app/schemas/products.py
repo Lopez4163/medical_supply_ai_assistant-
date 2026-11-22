@@ -2,13 +2,19 @@
 
 from decimal import Decimal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.models.catalog import CatalogLifecycleStatus
 from app.services.inventory import AvailabilityStatus
 
 
-class ProductCardPublic(BaseModel):
+class _StrictPublicProductModel(BaseModel):
+    """Reject fields that are not approved for browser-facing product projections."""
+
+    model_config = ConfigDict(extra="forbid")
+
+
+class ProductCardPublic(_StrictPublicProductModel):
     """A resolved sellable SKU suitable for a product-results batch."""
 
     sku: str
@@ -25,7 +31,7 @@ class ProductCardPublic(BaseModel):
     availability: AvailabilityStatus
 
 
-class ProductSearchResponse(BaseModel):
+class ProductSearchResponse(_StrictPublicProductModel):
     products: list[ProductCardPublic] = Field(max_length=5)
     next_cursor: str | None
 
@@ -48,7 +54,7 @@ class AvailabilityRequest(BaseModel):
         return normalized_sku
 
 
-class AvailabilityResponse(BaseModel):
+class AvailabilityResponse(_StrictPublicProductModel):
     sku: str
     availability: AvailabilityStatus
     quantity_sufficient: bool
