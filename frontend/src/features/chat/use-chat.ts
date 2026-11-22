@@ -125,7 +125,7 @@ export function useChat({ conversationId }: UseChatOptions) {
       setPendingMessage(null);
       setRecoveryError(null);
       if (response.draft_changed) {
-        await queryClient.invalidateQueries({ queryKey: queryKeys.draftQuote() });
+        await queryClient.invalidateQueries({ queryKey: queryKeys.draftQuote(conversationId) });
       }
     },
     onError: (error, operation) => {

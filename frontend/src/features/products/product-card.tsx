@@ -5,7 +5,10 @@ import type { ProductCardPublic } from "@/lib/api/client";
 type ProductCardProps = {
   product: ProductCardPublic;
   isSelected: boolean;
+  isAddingToQuote?: boolean;
+  onAddToQuote?: (sku: string, quantity: number) => void;
   onSelect: (sku: string) => void;
+  requiresSelection?: boolean;
 };
 
 function availabilityLabel(availability: ProductCardPublic["availability"]): string {
@@ -24,9 +27,28 @@ function attributeSummary(attributes: ProductCardPublic["selector_attributes"]):
   return entries.map(([key, value]) => `${key}: ${String(value)}`).join(" · ");
 }
 
-export function ProductCard({ product, isSelected, onSelect }: ProductCardProps) {
+export function ProductCard({
+  product,
+  isAddingToQuote = false,
+  isSelected,
+  onAddToQuote,
+  onSelect,
+  requiresSelection = false,
+}: ProductCardProps) {
   const attributes = attributeSummary(product.selector_attributes);
   const [imageUnavailable, setImageUnavailable] = useState(false);
+  const [quantity, setQuantity] = useState("");
+  const [quantityError, setQuantityError] = useState<string | null>(null);
+
+  function addToQuote() {
+    const parsedQuantity = Number(quantity);
+    if (!Number.isInteger(parsedQuantity) || parsedQuantity <= 0) {
+      setQuantityError("Enter a positive whole quantity before adding this SKU.");
+      return;
+    }
+    setQuantityError(null);
+    onAddToQuote?.(product.sku, parsedQuantity);
+  }
 
   return (
     <article
@@ -83,6 +105,48 @@ export function ProductCard({ product, isSelected, onSelect }: ProductCardProps)
       >
         {isSelected ? "Viewing details" : `View details for ${product.sku}`}
       </button>
+      {onAddToQuote ? (
+        <div className="mt-3 border-t border-slate-100 pt-3">
+          <label
+            className="block text-sm font-medium text-slate-800"
+            htmlFor={`quantity-${product.sku}`}
+          >
+            Quantity for {product.sku}
+          </label>
+          <div className="mt-1 flex gap-2">
+            <input
+              aria-describedby={quantityError ? `quantity-error-${product.sku}` : undefined}
+              className="w-24 rounded-md border border-slate-300 p-2"
+              id={`quantity-${product.sku}`}
+              inputMode="numeric"
+              min="1"
+              onChange={(event) => setQuantity(event.target.value)}
+              type="number"
+              value={quantity}
+            />
+            <button
+              className="min-h-11 rounded-md bg-sky-700 px-3 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-slate-300"
+              disabled={isAddingToQuote || (requiresSelection && !isSelected)}
+              onClick={addToQuote}
+              type="button"
+            >
+              {isAddingToQuote ? "Adding…" : "Add to quote"}
+            </button>
+          </div>
+          {requiresSelection && !isSelected ? (
+            <p className="mt-1 text-xs text-slate-600">Select this SKU to add it.</p>
+          ) : null}
+          {quantityError ? (
+            <p
+              className="mt-1 text-sm text-red-800"
+              id={`quantity-error-${product.sku}`}
+              role="alert"
+            >
+              {quantityError}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
     </article>
   );
 }

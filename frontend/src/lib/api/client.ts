@@ -7,6 +7,19 @@ export type ChatTurnRequest = components["schemas"]["ChatTurnRequest"];
 export type ChatTurnResponse = components["schemas"]["ChatTurnResponse"];
 export type ProductCardPublic = components["schemas"]["ProductCardPublic"];
 export type ProductDetailPublic = components["schemas"]["ProductDetailPublic"];
+export type DraftQuoteResponse = components["schemas"]["DraftQuoteResponse"];
+export type DraftQuotePublic = components["schemas"]["DraftQuotePublic"];
+export type AddQuoteLineRequest = components["schemas"]["AddQuoteLineRequest"];
+export type UpdateQuoteLineRequest = components["schemas"]["UpdateQuoteLineRequest"];
+export type DeleteQuoteLineRequest = components["schemas"]["DeleteQuoteLineRequest"];
+export type QuoteReviewRequest = components["schemas"]["QuoteReviewRequest"];
+export type QuoteReviewPublic = components["schemas"]["QuoteReviewPublic"];
+export type QuoteSubmitRequest = components["schemas"]["QuoteSubmitRequest"];
+export type QuoteSubmissionPublic = components["schemas"]["QuoteSubmissionPublic"];
+export type SupportReviewRequest = components["schemas"]["SupportReviewRequest"];
+export type SupportReviewPublic = components["schemas"]["SupportReviewPublic"];
+export type SupportSubmitRequest = components["schemas"]["SupportSubmitRequest"];
+export type SupportInquiryPublic = components["schemas"]["SupportInquiryPublic"];
 
 export class ApiClientError extends Error {
   public constructor(
@@ -57,6 +70,84 @@ export async function getProduct(sku: string, signal?: AbortSignal): Promise<Pro
   return requestJson<ProductDetailPublic>(`/products/${encodeURIComponent(sku)}`, {
     method: "GET",
     signal,
+  });
+}
+
+export async function getDraftQuote(signal?: AbortSignal): Promise<DraftQuoteResponse> {
+  return requestJson<DraftQuoteResponse>("/quotations/draft", { method: "GET", signal });
+}
+
+export async function addQuoteLine(request: AddQuoteLineRequest): Promise<DraftQuotePublic> {
+  return requestJson<DraftQuotePublic>("/quotations/draft/lines", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
+}
+
+export async function updateQuoteLine(
+  lineId: string,
+  request: UpdateQuoteLineRequest,
+): Promise<DraftQuotePublic> {
+  return requestJson<DraftQuotePublic>(`/quotations/draft/lines/${encodeURIComponent(lineId)}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
+}
+
+export async function deleteQuoteLine(
+  lineId: string,
+  request: DeleteQuoteLineRequest,
+): Promise<DraftQuotePublic> {
+  return requestJson<DraftQuotePublic>(`/quotations/draft/lines/${encodeURIComponent(lineId)}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
+}
+
+export async function reviewQuote(request: QuoteReviewRequest): Promise<QuoteReviewPublic> {
+  return requestJson<QuoteReviewPublic>("/quotations/draft/review", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
+}
+
+export async function submitQuote(request: QuoteSubmitRequest): Promise<QuoteSubmissionPublic> {
+  return requestJson<QuoteSubmissionPublic>("/quotations/submissions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
+}
+
+export async function reconcileQuote(operationId: string): Promise<QuoteSubmissionPublic> {
+  return requestJson<QuoteSubmissionPublic>(`/quotations/submissions/reconcile/${operationId}`, {
+    method: "GET",
+  });
+}
+
+export async function reviewSupport(request: SupportReviewRequest): Promise<SupportReviewPublic> {
+  return requestJson<SupportReviewPublic>("/support/review", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
+}
+
+export async function submitSupport(request: SupportSubmitRequest): Promise<SupportInquiryPublic> {
+  return requestJson<SupportInquiryPublic>("/support/inquiries", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
+}
+
+export async function reconcileSupport(operationId: string): Promise<SupportInquiryPublic> {
+  return requestJson<SupportInquiryPublic>(`/support/inquiries/reconcile/${operationId}`, {
+    method: "GET",
   });
 }
 

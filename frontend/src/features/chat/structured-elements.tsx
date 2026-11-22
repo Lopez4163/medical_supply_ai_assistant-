@@ -1,17 +1,21 @@
 import type { ConversationMessagePublic } from "@/lib/api/client";
 
 import { ProductResults } from "@/features/products/product-results";
+import type { DraftQuoteController } from "@/features/quotation/use-draft-quote";
+import { SupportInquiry } from "@/features/support/support-inquiry";
 
 type StructuredElementsProps = {
   conversationId: string;
   elements: ConversationMessagePublic["elements"];
   onShowMore: (cursor: string) => void;
+  quotationController?: DraftQuoteController;
 };
 
 export function StructuredElements({
   conversationId,
   elements,
   onShowMore,
+  quotationController,
 }: StructuredElementsProps) {
   return (
     <div className="mt-3 space-y-3">
@@ -29,6 +33,12 @@ export function StructuredElements({
                   nextCursor={element.result_set.next_cursor}
                   onShowMore={onShowMore}
                   products={element.result_set.products}
+                  isAddingToQuote={
+                    quotationController?.isPending ||
+                    quotationController?.draftQuery.isPending ||
+                    false
+                  }
+                  onAddToQuote={quotationController?.addLine}
                   resultContext={element.result_context ?? "search"}
                 />
               </div>
@@ -76,16 +86,11 @@ export function StructuredElements({
             );
           case "support_inquiry_form":
             return (
-              <section
-                className="rounded-md border border-slate-200 p-3"
+              <SupportInquiry
+                description={element.form.description}
                 key={`${element.kind}-${index}`}
-              >
-                <p className="font-medium text-slate-800">{element.form.title}</p>
-                <p className="mt-1 text-sm text-slate-700">{element.form.description}</p>
-                <p className="mt-2 text-sm text-slate-500">
-                  Support forms will be available in a later step.
-                </p>
-              </section>
+                title={element.form.title}
+              />
             );
         }
       })}

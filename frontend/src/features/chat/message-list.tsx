@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 
 import type { ConversationMessagePublic } from "@/lib/api/client";
+import type { DraftQuoteController } from "@/features/quotation/use-draft-quote";
 
 import { StructuredElements } from "./structured-elements";
 import type { PendingChatMessage } from "./use-chat";
@@ -10,6 +11,7 @@ type MessageListProps = {
   messages: ConversationMessagePublic[];
   pendingMessage: PendingChatMessage | null;
   onShowMore: (cursor: string) => void;
+  quotationController?: DraftQuoteController;
 };
 
 function timestamp(value: string): string {
@@ -23,6 +25,7 @@ export function MessageList({
   messages,
   onShowMore,
   pendingMessage,
+  quotationController,
 }: MessageListProps) {
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -52,6 +55,7 @@ export function MessageList({
               conversationId={conversationId}
               elements={message.elements}
               onShowMore={onShowMore}
+              quotationController={quotationController}
             />
           ) : null}
           <time

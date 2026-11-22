@@ -37,6 +37,10 @@ function conversationResponse(): Response {
   );
 }
 
+function emptyDraftResponse(): Response {
+  return new Response(JSON.stringify({ draft: null }), { status: 200 });
+}
+
 function renderPage() {
   return render(
     <Providers>
@@ -55,7 +59,8 @@ describe("HomePage session bootstrap", () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(sessionResponse({ restored: false }))
-      .mockResolvedValueOnce(conversationResponse());
+      .mockResolvedValueOnce(conversationResponse())
+      .mockResolvedValueOnce(emptyDraftResponse());
     vi.stubGlobal("fetch", fetchMock);
 
     renderPage();
@@ -65,7 +70,7 @@ describe("HomePage session bootstrap", () => {
 
     expect(screen.getByRole("heading", { name: "AI Supply Assistant" })).toBeInTheDocument();
     expect(screen.getByText(/synthetic-data demonstration/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Quotation: 0 line items" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Quotation (0)" })).toBeEnabled();
     expect(screen.getByText("Welcome to the synthetic demonstration.")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Send" })).toBeDisabled();
     expect(fetchMock).toHaveBeenCalledWith(
@@ -80,7 +85,8 @@ describe("HomePage session bootstrap", () => {
       vi
         .fn()
         .mockResolvedValueOnce(sessionResponse({ restored: true }))
-        .mockResolvedValueOnce(conversationResponse()),
+        .mockResolvedValueOnce(conversationResponse())
+        .mockResolvedValueOnce(emptyDraftResponse()),
     );
 
     renderPage();

@@ -14,6 +14,8 @@ type ProductResultsProps = {
   resultContext?: "search" | "alternatives";
   nextCursor: string | null;
   onShowMore: (cursor: string) => void;
+  onAddToQuote?: (sku: string, quantity: number) => void;
+  isAddingToQuote?: boolean;
 };
 
 function productGroups(products: ProductCardPublic[]): ProductCardPublic[][] {
@@ -67,6 +69,8 @@ export function ProductResults({
   resultContext = "search",
   nextCursor,
   onShowMore,
+  onAddToQuote,
+  isAddingToQuote = false,
 }: ProductResultsProps) {
   const availableProducts = products.slice(0, resultContext === "alternatives" ? 3 : 5);
   const groups = useMemo(() => productGroups(availableProducts), [availableProducts]);
@@ -74,6 +78,7 @@ export function ProductResults({
   const activeSku = availableProducts.some((product) => product.sku === selectedSku)
     ? selectedSku
     : null;
+  const requiresSelection = Boolean(onAddToQuote);
 
   if (availableProducts.length === 0) {
     return <p className="text-sm text-slate-700">No matching products were returned.</p>;
@@ -107,9 +112,12 @@ export function ProductResults({
             {variants.map((product) => (
               <ProductCard
                 isSelected={activeSku === product.sku}
+                isAddingToQuote={isAddingToQuote}
                 key={product.sku}
+                onAddToQuote={onAddToQuote}
                 onSelect={setSelectedSku}
                 product={product}
+                requiresSelection={requiresSelection}
               />
             ))}
           </div>

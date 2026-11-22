@@ -93,6 +93,22 @@ describe("ProductResults", () => {
     expect(screen.getByRole("button", { name: "Viewing details" })).toBeInTheDocument();
   });
 
+  it("requires a selected sellable SKU and positive whole quantity before adding", () => {
+    const onAddToQuote = vi.fn();
+    renderResults({ onAddToQuote });
+
+    const addButton = screen.getByRole("button", { name: "Add to quote" });
+    expect(addButton).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "View details for PPE-NIT-M" }));
+    expect(addButton).toBeEnabled();
+    fireEvent.click(addButton);
+    expect(screen.getByRole("alert")).toHaveTextContent("positive whole quantity");
+    fireEvent.change(screen.getByLabelText("Quantity for PPE-NIT-M"), { target: { value: "2" } });
+    fireEvent.click(addButton);
+
+    expect(onAddToQuote).toHaveBeenCalledWith("PPE-NIT-M", 2);
+  });
+
   it("uses only the backend cursor for a five-card Show More batch", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(detailResponse()));
     const onShowMore = vi.fn();

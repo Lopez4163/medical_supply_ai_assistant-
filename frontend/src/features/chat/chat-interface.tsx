@@ -1,18 +1,21 @@
 import type { SessionBootstrapState } from "@/features/session/use-session-bootstrap";
+import type { DraftQuoteController } from "@/features/quotation/use-draft-quote";
 
 import { ChatComposer } from "./chat-composer";
 import { MessageList } from "./message-list";
 import { useChat } from "./use-chat";
 
 type ChatInterfaceProps = {
+  draftController?: DraftQuoteController;
   sessionState: SessionBootstrapState;
 };
 
 type ActiveChatProps = {
   conversationId: string;
+  draftController?: DraftQuoteController;
 };
 
-function ActiveChat({ conversationId }: ActiveChatProps) {
+function ActiveChat({ conversationId, draftController }: ActiveChatProps) {
   const chat = useChat({ conversationId });
 
   return (
@@ -47,6 +50,7 @@ function ActiveChat({ conversationId }: ActiveChatProps) {
             messages={chat.messages}
             onShowMore={chat.showMore}
             pendingMessage={chat.pendingMessage}
+            quotationController={draftController}
           />
         ) : null}
       </section>
@@ -79,7 +83,7 @@ function ActiveChat({ conversationId }: ActiveChatProps) {
   );
 }
 
-export function ChatInterface({ sessionState }: ChatInterfaceProps) {
+export function ChatInterface({ draftController, sessionState }: ChatInterfaceProps) {
   return (
     <main aria-label="Conversation" className="flex min-h-0 flex-1 flex-col">
       {sessionState.status === "loading" ? (
@@ -106,6 +110,7 @@ export function ChatInterface({ sessionState }: ChatInterfaceProps) {
         <ActiveChat
           key={sessionState.session.conversation_id}
           conversationId={sessionState.session.conversation_id}
+          draftController={draftController}
         />
       ) : null}
     </main>
