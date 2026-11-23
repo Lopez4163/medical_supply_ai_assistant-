@@ -111,6 +111,21 @@ class SessionService:
         guest_session, conversation = existing
         return GuestContext(guest_session.id, conversation.id, guest_session.expires_at)
 
+    async def renew_activity(self, *, guest_session_id: UUID) -> None:
+        """Renew only a still-valid session inside a caller-owned protected transaction."""
+        now = self._now()
+        guest_session = await self._session.scalar(
+            select(GuestSession)
+            .where(GuestSession.id == guest_session_id)
+            .where(GuestSession.revoked_at.is_(None))
+            .where(GuestSession.expires_at > now)
+            .with_for_update()
+        )
+        if guest_session is None:
+            raise InvalidGuestSession
+        guest_session.last_activity_at = now
+        guest_session.expires_at = self._expires_at(now)
+
     async def _find_valid_session(
         self, *, raw_token: str | None, now: datetime
     ) -> tuple[GuestSession, Conversation] | None:
