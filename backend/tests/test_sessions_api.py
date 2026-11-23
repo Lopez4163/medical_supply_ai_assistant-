@@ -137,6 +137,26 @@ async def test_bootstrap_rejects_cross_origin_requests(
 
 
 @pytest.mark.asyncio
+async def test_bootstrap_uses_configured_frontend_origins_not_the_backend_host(
+    client_and_session: tuple[httpx.AsyncClient, AsyncSession],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client, _session = client_and_session
+    monkeypatch.setenv("TRUSTED_ORIGINS", "https://frontend.example")
+    get_settings.cache_clear()
+
+    approved = await client.post("/api/v1/sessions", headers={"Origin": "https://frontend.example"})
+    missing = await client.post("/api/v1/sessions", headers={"Origin": ""})
+    malformed = await client.post("/api/v1/sessions", headers={"Origin": "not-an-origin"})
+    cross_origin = await client.post(
+        "/api/v1/sessions", headers={"Origin": "https://attacker.example"}
+    )
+
+    assert approved.status_code == 201
+    assert missing.status_code == malformed.status_code == cross_origin.status_code == 403
+
+
+@pytest.mark.asyncio
 async def test_current_rejects_expired_and_revoked_cookie_sessions(
     client_and_session: tuple[httpx.AsyncClient, AsyncSession],
 ) -> None:
