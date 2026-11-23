@@ -11,6 +11,7 @@ from app.models.catalog import (
 )
 from app.models.conversation import Conversation, ConversationMessage, GuestSession
 from app.models.quotation import IdempotencyOperation, QuoteDraft, QuoteDraftLine, QuoteDraftStatus
+from app.models.support import SupportInquiry, SupportReview
 
 __all__ = [
     "CompatibilityState",
@@ -27,4 +28,6 @@ __all__ = [
     "QuoteDraftStatus",
     "SkuCompatibility",
     "SkuVariant",
+    "SupportInquiry",
+    "SupportReview",
 ]
