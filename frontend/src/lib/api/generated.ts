@@ -4,1777 +4,1796 @@
  */
 
 export interface paths {
-    "/api/v1/conversations/current": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Current Conversation
-         * @description Restore stored display snapshots without recalculating current catalog facts.
-         */
-        get: operations["get_current_conversation_api_v1_conversations_current_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  "/api/v1/conversations/current": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/live": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Liveness
-         * @description Confirm that the application process is accepting requests.
-         */
-        get: operations["get_liveness_api_v1_live_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Get Current Conversation
+     * @description Restore stored display snapshots without recalculating current catalog facts.
+     */
+    get: operations["get_current_conversation_api_v1_conversations_current_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/live": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/products/availability": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Check Product Availability
-         * @description Check one requested quantity against current private PostgreSQL inventory.
-         */
-        post: operations["check_product_availability_api_v1_products_availability_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Get Liveness
+     * @description Confirm that the application process is accepting requests.
+     */
+    get: operations["get_liveness_api_v1_live_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/products/availability": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/products/search": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Search Products
-         * @description Search public catalog fields in deterministic, five-card batches.
-         */
-        get: operations["search_products_api_v1_products_search_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Check Product Availability
+     * @description Check one requested quantity against current private PostgreSQL inventory.
+     */
+    post: operations["check_product_availability_api_v1_products_availability_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/products/search": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/products/{sku}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Product
-         * @description Return one resolved SKU without exposing private inventory.
-         */
-        get: operations["get_product_api_v1_products__sku__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Search Products
+     * @description Search public catalog fields in deterministic, five-card batches.
+     */
+    get: operations["search_products_api_v1_products_search_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/products/{sku}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/quotations/draft": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get Draft Quote */
-        get: operations["get_draft_quote_api_v1_quotations_draft_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Get Product
+     * @description Return one resolved SKU without exposing private inventory.
+     */
+    get: operations["get_product_api_v1_products__sku__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/quotations/draft": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/quotations/draft/lines": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Add Quote Line */
-        post: operations["add_quote_line_api_v1_quotations_draft_lines_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Get Draft Quote */
+    get: operations["get_draft_quote_api_v1_quotations_draft_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/quotations/draft/lines": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/quotations/draft/lines/{line_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Delete Quote Line
-         * @description Use Document 07's request body so DELETE remains idempotency/version protected.
-         */
-        delete: operations["delete_quote_line_api_v1_quotations_draft_lines__line_id__delete"];
-        options?: never;
-        head?: never;
-        /** Update Quote Line */
-        patch: operations["update_quote_line_api_v1_quotations_draft_lines__line_id__patch"];
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Add Quote Line */
+    post: operations["add_quote_line_api_v1_quotations_draft_lines_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/quotations/draft/lines/{line_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/quotations/draft/review": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Review Quote Draft */
-        post: operations["review_quote_draft_api_v1_quotations_draft_review_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * Delete Quote Line
+     * @description Use Document 07's request body so DELETE remains idempotency/version protected.
+     */
+    delete: operations["delete_quote_line_api_v1_quotations_draft_lines__line_id__delete"];
+    options?: never;
+    head?: never;
+    /** Update Quote Line */
+    patch: operations["update_quote_line_api_v1_quotations_draft_lines__line_id__patch"];
+    trace?: never;
+  };
+  "/api/v1/quotations/draft/review": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/quotations/submissions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Submit Quote */
-        post: operations["submit_quote_api_v1_quotations_submissions_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Review Quote Draft */
+    post: operations["review_quote_draft_api_v1_quotations_draft_review_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/quotations/submissions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/quotations/submissions/reconcile/{operation_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Reconcile Quote Submission */
-        get: operations["reconcile_quote_submission_api_v1_quotations_submissions_reconcile__operation_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Submit Quote */
+    post: operations["submit_quote_api_v1_quotations_submissions_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/quotations/submissions/reconcile/{operation_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/ready": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Readiness
-         * @description Confirm that PostgreSQL and its required pgvector extension are available.
-         */
-        get: operations["get_readiness_api_v1_ready_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Reconcile Quote Submission */
+    get: operations["reconcile_quote_submission_api_v1_quotations_submissions_reconcile__operation_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/ready": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/sessions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Bootstrap Session */
-        post: operations["bootstrap_session_api_v1_sessions_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Get Readiness
+     * @description Confirm that PostgreSQL and its required pgvector extension are available.
+     */
+    get: operations["get_readiness_api_v1_ready_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/sessions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/sessions/current": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get Current Session */
-        get: operations["get_current_session_api_v1_sessions_current_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Bootstrap Session */
+    post: operations["bootstrap_session_api_v1_sessions_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/sessions/current": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/support/inquiries": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Submit Support Inquiry */
-        post: operations["submit_support_inquiry_api_v1_support_inquiries_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Get Current Session */
+    get: operations["get_current_session_api_v1_sessions_current_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/support/inquiries": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/support/inquiries/reconcile/{operation_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Reconcile Support Inquiry */
-        get: operations["reconcile_support_inquiry_api_v1_support_inquiries_reconcile__operation_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Submit Support Inquiry */
+    post: operations["submit_support_inquiry_api_v1_support_inquiries_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/support/inquiries/reconcile/{operation_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/support/review": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Review Support Inquiry */
-        post: operations["review_support_inquiry_api_v1_support_review_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Reconcile Support Inquiry */
+    get: operations["reconcile_support_inquiry_api_v1_support_inquiries_reconcile__operation_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/support/review": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    get?: never;
+    put?: never;
+    /** Review Support Inquiry */
+    post: operations["review_support_inquiry_api_v1_support_review_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        /** AddQuoteLineRequest */
-        AddQuoteLineRequest: {
-            /** Expected Version */
-            expected_version: number;
-            /**
-             * Operation Id
-             * Format: uuid
-             */
-            operation_id: string;
-            /** Quantity */
-            quantity: number;
-            /** Sku */
-            sku: string;
-        };
-        /** ApiError */
-        ApiError: {
-            /**
-             * Code
-             * @enum {string}
-             */
-            code: "VALIDATION_FAILED" | "SESSION_EXPIRED" | "SESSION_NOT_FOUND" | "RATE_LIMITED" | "AI_UNAVAILABLE" | "AI_BUDGET_EXHAUSTED" | "QUOTE_VERSION_CONFLICT" | "OPERATION_UNCERTAIN" | "CONFIRMATION_INVALID" | "SKU_NOT_RESOLVED" | "NOT_FOUND";
-            /** Details */
-            details?: {
-                [key: string]: string;
-            } | null;
-            /** Message */
-            message: string;
-            /**
-             * Request Id
-             * Format: uuid
-             */
-            request_id: string;
-            /**
-             * Retryable
-             * @default false
-             */
-            retryable: boolean;
-        };
-        /** ApiErrorResponse */
-        ApiErrorResponse: {
-            error: components["schemas"]["ApiError"];
-        };
-        /** AvailabilityRequest */
-        AvailabilityRequest: {
-            /** Quantity */
-            quantity: number;
-            /** Sku */
-            sku: string;
-        };
-        /** AvailabilityResponse */
-        AvailabilityResponse: {
-            availability: components["schemas"]["AvailabilityStatus"];
-            /** Message */
-            message: string;
-            /** Quantity Sufficient */
-            quantity_sufficient: boolean;
-            /** Sku */
-            sku: string;
-        };
-        /**
-         * AvailabilityStatus
-         * @enum {string}
-         */
-        AvailabilityStatus: "in_stock" | "limited_stock" | "out_of_stock" | "discontinued" | "unavailable";
-        /**
-         * CatalogLifecycleStatus
-         * @enum {string}
-         */
-        CatalogLifecycleStatus: "active" | "discontinued";
-        /** ConfirmationPromptElement */
-        ConfirmationPromptElement: {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            kind: "confirmation_prompt";
-            prompt: components["schemas"]["ConfirmationPromptSnapshot"];
-        };
-        /**
-         * ConfirmationPromptSnapshot
-         * @description A display-only confirmation prompt without a protected action token.
-         */
-        ConfirmationPromptSnapshot: {
-            /** Confirm Label */
-            confirm_label: string;
-            /** Message */
-            message: string;
-            /** Title */
-            title: string;
-        };
-        /** ConversationHistoryResponse */
-        ConversationHistoryResponse: {
-            /**
-             * Conversation Id
-             * Format: uuid
-             */
-            conversation_id: string;
-            /** Messages */
-            messages: components["schemas"]["ConversationMessagePublic"][];
-        };
-        /** ConversationMessagePublic */
-        ConversationMessagePublic: {
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /** Elements */
-            elements: (components["schemas"]["ProductResultsElement"] | components["schemas"]["InventoryNoticeElement"] | components["schemas"]["QuoteUpdateElement"] | components["schemas"]["ConfirmationPromptElement"] | components["schemas"]["SourceReferenceElement"] | components["schemas"]["SupportInquiryFormElement"])[];
-            /**
-             * Freshness
-             * @default historical_snapshot
-             * @constant
-             */
-            freshness: "historical_snapshot";
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /**
-             * Kind
-             * @enum {string}
-             */
-            kind: "welcome" | "turn";
-            /** Ordinal */
-            ordinal: number;
-            /**
-             * Role
-             * @enum {string}
-             */
-            role: "user" | "assistant";
-            /** Text */
-            text: string;
-        };
-        /** DeleteQuoteLineRequest */
-        DeleteQuoteLineRequest: {
-            /** Expected Version */
-            expected_version: number;
-            /**
-             * Operation Id
-             * Format: uuid
-             */
-            operation_id: string;
-        };
-        /**
-         * DraftQuoteLinePublic
-         * @description Current catalog display details with an indicative price captured at first add.
-         */
-        DraftQuoteLinePublic: {
-            availability: components["schemas"]["AvailabilityStatus"];
-            /** Availability Notice */
-            availability_notice: string;
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /** Indicative Line Subtotal Usd */
-            indicative_line_subtotal_usd: string;
-            /** Indicative Unit Price Usd */
-            indicative_unit_price_usd: string;
-            /** Product Id */
-            product_id: string;
-            /** Product Name */
-            product_name: string;
-            /** Quantity Sufficient */
-            quantity_sufficient: boolean;
-            /** Requested Quantity */
-            requested_quantity: number;
-            /** Sales Unit */
-            sales_unit: string;
-            /** Selector Attributes */
-            selector_attributes: {
-                [key: string]: unknown;
-            };
-            /** Sku */
-            sku: string;
-            /**
-             * Updated At
-             * Format: date-time
-             */
-            updated_at: string;
-        };
-        /** DraftQuotePublic */
-        DraftQuotePublic: {
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /** Indicative Total Usd */
-            indicative_total_usd: string;
-            /** Lines */
-            lines: components["schemas"]["DraftQuoteLinePublic"][];
-            status: components["schemas"]["QuoteDraftStatus"];
-            /**
-             * Updated At
-             * Format: date-time
-             */
-            updated_at: string;
-            /** Version */
-            version: number;
-        };
-        /** DraftQuoteResponse */
-        DraftQuoteResponse: {
-            draft: components["schemas"]["DraftQuotePublic"] | null;
-        };
-        /** GuestSessionPublic */
-        GuestSessionPublic: {
-            /**
-             * Conversation Id
-             * Format: uuid
-             */
-            conversation_id: string;
-            /**
-             * Expires At
-             * Format: date-time
-             */
-            expires_at: string;
-        };
-        /** HTTPValidationError */
-        HTTPValidationError: {
-            /** Detail */
-            detail?: components["schemas"]["ValidationError"][];
-        };
-        /** InventoryNoticeElement */
-        InventoryNoticeElement: {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            kind: "inventory_notice";
-            notice: components["schemas"]["AvailabilityResponse"];
-        };
-        /** LivenessResponse */
-        LivenessResponse: {
-            /** Status */
-            status: string;
-        };
-        /**
-         * ProductCardPublic
-         * @description A resolved sellable SKU suitable for a product-results batch.
-         */
-        ProductCardPublic: {
-            availability: components["schemas"]["AvailabilityStatus"];
-            /** Category Code */
-            category_code: string;
-            /** Category Name */
-            category_name: string;
-            /** Image Fallback Key */
-            image_fallback_key: string;
-            /** Indicative Price Usd */
-            indicative_price_usd: string;
-            lifecycle_status: components["schemas"]["CatalogLifecycleStatus"];
-            /** Name */
-            name: string;
-            /** Primary Image Reference */
-            primary_image_reference: string | null;
-            /** Product Id */
-            product_id: string;
-            /** Sales Unit */
-            sales_unit: string;
-            /** Selector Attributes */
-            selector_attributes: {
-                [key: string]: unknown;
-            };
-            /** Sku */
-            sku: string;
-        };
-        /** ProductDetailPublic */
-        ProductDetailPublic: {
-            availability: components["schemas"]["AvailabilityStatus"];
-            /** Category Code */
-            category_code: string;
-            /** Category Name */
-            category_name: string;
-            /** Description */
-            description: string;
-            /** Image Fallback Key */
-            image_fallback_key: string;
-            /** Indicative Price Usd */
-            indicative_price_usd: string;
-            lifecycle_status: components["schemas"]["CatalogLifecycleStatus"];
-            /** Name */
-            name: string;
-            /** Primary Image Reference */
-            primary_image_reference: string | null;
-            /** Product Id */
-            product_id: string;
-            /** Sales Unit */
-            sales_unit: string;
-            /** Searchable Attributes */
-            searchable_attributes: {
-                [key: string]: unknown;
-            };
-            /** Selector Attributes */
-            selector_attributes: {
-                [key: string]: unknown;
-            };
-            /** Sku */
-            sku: string;
-        };
-        /** ProductResultsElement */
-        ProductResultsElement: {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            kind: "product_results";
-            result_set: components["schemas"]["ProductSearchResponse"];
-        };
-        /** ProductSearchResponse */
-        ProductSearchResponse: {
-            /** Next Cursor */
-            next_cursor: string | null;
-            /** Products */
-            products: components["schemas"]["ProductCardPublic"][];
-        };
-        /** QuoteContact */
-        QuoteContact: {
-            /** Email */
-            email?: string | null;
-            /** First Name */
-            first_name: string;
-            /** Last Name */
-            last_name: string;
-            /** Phone */
-            phone?: string | null;
-        };
-        /**
-         * QuoteDraftStatus
-         * @enum {string}
-         */
-        QuoteDraftStatus: "active" | "submitted";
-        /** QuoteReviewPublic */
-        QuoteReviewPublic: {
-            /** Disclosure */
-            disclosure: string;
-            draft: components["schemas"]["DraftQuotePublic"];
-            /**
-             * Expires At
-             * Format: date-time
-             */
-            expires_at: string;
-            /** Review Token */
-            review_token: string;
-        };
-        /** QuoteReviewRequest */
-        QuoteReviewRequest: {
-            contact: components["schemas"]["QuoteContact"];
-            /** Delivery City */
-            delivery_city?: string | null;
-            /** Expected Version */
-            expected_version: number;
-            /**
-             * Fulfillment
-             * @enum {string}
-             */
-            fulfillment: "delivery" | "cali_pickup";
-        };
-        /** QuoteSubmissionPublic */
-        QuoteSubmissionPublic: {
-            /** Message */
-            message: string;
-            /** Reference */
-            reference: string;
-            /**
-             * Submitted At
-             * Format: date-time
-             */
-            submitted_at: string;
-        };
-        /** QuoteSubmitRequest */
-        QuoteSubmitRequest: {
-            /**
-             * Confirmation
-             * @constant
-             */
-            confirmation: true;
-            /** Expected Version */
-            expected_version: number;
-            /**
-             * Operation Id
-             * Format: uuid
-             */
-            operation_id: string;
-            /** Review Token */
-            review_token: string;
-        };
-        /** QuoteUpdateElement */
-        QuoteUpdateElement: {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            kind: "quote_update";
-            quote: components["schemas"]["QuoteUpdateSnapshot"];
-        };
-        /**
-         * QuoteUpdateSnapshot
-         * @description Minimal quote display reference; authoritative quote data remains separate.
-         */
-        QuoteUpdateSnapshot: {
-            /**
-             * Draft Id
-             * Format: uuid
-             */
-            draft_id: string;
-            /** Version */
-            version: number;
-        };
-        /** SessionBootstrapResponse */
-        SessionBootstrapResponse: {
-            /**
-             * Conversation Id
-             * Format: uuid
-             */
-            conversation_id: string;
-            /**
-             * Expires At
-             * Format: date-time
-             */
-            expires_at: string;
-            /** Restored */
-            restored: boolean;
-            /** Welcome Message */
-            welcome_message: string;
-        };
-        /** SourceReferenceElement */
-        SourceReferenceElement: {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            kind: "source_reference";
-            source: components["schemas"]["SourceReferenceSnapshot"];
-        };
-        /**
-         * SourceReferenceSnapshot
-         * @description Approved evidence metadata persisted with an assistant response.
-         */
-        SourceReferenceSnapshot: {
-            /** Excerpt */
-            excerpt: string;
-            /** Source Id */
-            source_id: string;
-            /** Title */
-            title: string;
-        };
-        /** SupportContact */
-        SupportContact: {
-            /** Email */
-            email?: string | null;
-            /** First Name */
-            first_name: string;
-            /** Last Name */
-            last_name: string;
-            /** Phone */
-            phone?: string | null;
-        };
-        /** SupportInquiryFormElement */
-        SupportInquiryFormElement: {
-            form: components["schemas"]["SupportInquiryFormSnapshot"];
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            kind: "support_inquiry_form";
-        };
-        /**
-         * SupportInquiryFormSnapshot
-         * @description Display metadata for the later opt-in support workflow.
-         */
-        SupportInquiryFormSnapshot: {
-            /** Description */
-            description: string;
-            /** Title */
-            title: string;
-        };
-        /** SupportInquiryPublic */
-        SupportInquiryPublic: {
-            /** Message */
-            message: string;
-            /** Reference */
-            reference: string;
-            /**
-             * Submitted At
-             * Format: date-time
-             */
-            submitted_at: string;
-        };
-        /** SupportReviewPublic */
-        SupportReviewPublic: {
-            /** Disclosure */
-            disclosure: string;
-            /**
-             * Expires At
-             * Format: date-time
-             */
-            expires_at: string;
-            /** Review Token */
-            review_token: string;
-            /** Subject */
-            subject: string;
-            /** Summary */
-            summary: string;
-        };
-        /** SupportReviewRequest */
-        SupportReviewRequest: {
-            contact?: components["schemas"]["SupportContact"] | null;
-            /** Conversation Context */
-            conversation_context?: string | null;
-            /**
-             * Opt In
-             * @constant
-             */
-            opt_in: true;
-            /**
-             * Reuse Contact
-             * @default false
-             */
-            reuse_contact: boolean;
-            /** Subject */
-            subject: string;
-            /** Summary */
-            summary: string;
-        };
-        /** SupportSubmitRequest */
-        SupportSubmitRequest: {
-            /**
-             * Confirmation
-             * @constant
-             */
-            confirmation: true;
-            /**
-             * Operation Id
-             * Format: uuid
-             */
-            operation_id: string;
-            /** Review Token */
-            review_token: string;
-        };
-        /** UpdateQuoteLineRequest */
-        UpdateQuoteLineRequest: {
-            /** Expected Version */
-            expected_version: number;
-            /**
-             * Mode
-             * @enum {string}
-             */
-            mode: "replace" | "increment";
-            /**
-             * Operation Id
-             * Format: uuid
-             */
-            operation_id: string;
-            /** Quantity */
-            quantity: number;
-        };
-        /** ValidationError */
-        ValidationError: {
-            /** Context */
-            ctx?: Record<string, never>;
-            /** Input */
-            input?: unknown;
-            /** Location */
-            loc: (string | number)[];
-            /** Message */
-            msg: string;
-            /** Error Type */
-            type: string;
-        };
+  schemas: {
+    /** AddQuoteLineRequest */
+    AddQuoteLineRequest: {
+      /** Expected Version */
+      expected_version: number;
+      /**
+       * Operation Id
+       * Format: uuid
+       */
+      operation_id: string;
+      /** Quantity */
+      quantity: number;
+      /** Sku */
+      sku: string;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    /** ApiError */
+    ApiError: {
+      /**
+       * Code
+       * @enum {string}
+       */
+      code:
+        | "VALIDATION_FAILED"
+        | "SESSION_EXPIRED"
+        | "SESSION_NOT_FOUND"
+        | "RATE_LIMITED"
+        | "AI_UNAVAILABLE"
+        | "AI_BUDGET_EXHAUSTED"
+        | "QUOTE_VERSION_CONFLICT"
+        | "OPERATION_UNCERTAIN"
+        | "CONFIRMATION_INVALID"
+        | "SKU_NOT_RESOLVED"
+        | "NOT_FOUND";
+      /** Details */
+      details?: {
+        [key: string]: string;
+      } | null;
+      /** Message */
+      message: string;
+      /**
+       * Request Id
+       * Format: uuid
+       */
+      request_id: string;
+      /**
+       * Retryable
+       * @default false
+       */
+      retryable: boolean;
+    };
+    /** ApiErrorResponse */
+    ApiErrorResponse: {
+      error: components["schemas"]["ApiError"];
+    };
+    /** AvailabilityRequest */
+    AvailabilityRequest: {
+      /** Quantity */
+      quantity: number;
+      /** Sku */
+      sku: string;
+    };
+    /** AvailabilityResponse */
+    AvailabilityResponse: {
+      availability: components["schemas"]["AvailabilityStatus"];
+      /** Message */
+      message: string;
+      /** Quantity Sufficient */
+      quantity_sufficient: boolean;
+      /** Sku */
+      sku: string;
+    };
+    /**
+     * AvailabilityStatus
+     * @enum {string}
+     */
+    AvailabilityStatus:
+      "in_stock" | "limited_stock" | "out_of_stock" | "discontinued" | "unavailable";
+    /**
+     * CatalogLifecycleStatus
+     * @enum {string}
+     */
+    CatalogLifecycleStatus: "active" | "discontinued";
+    /** ConfirmationPromptElement */
+    ConfirmationPromptElement: {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      kind: "confirmation_prompt";
+      prompt: components["schemas"]["ConfirmationPromptSnapshot"];
+    };
+    /**
+     * ConfirmationPromptSnapshot
+     * @description A display-only confirmation prompt without a protected action token.
+     */
+    ConfirmationPromptSnapshot: {
+      /** Confirm Label */
+      confirm_label: string;
+      /** Message */
+      message: string;
+      /** Title */
+      title: string;
+    };
+    /** ConversationHistoryResponse */
+    ConversationHistoryResponse: {
+      /**
+       * Conversation Id
+       * Format: uuid
+       */
+      conversation_id: string;
+      /** Messages */
+      messages: components["schemas"]["ConversationMessagePublic"][];
+    };
+    /** ConversationMessagePublic */
+    ConversationMessagePublic: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Elements */
+      elements: (
+        | components["schemas"]["ProductResultsElement"]
+        | components["schemas"]["InventoryNoticeElement"]
+        | components["schemas"]["QuoteUpdateElement"]
+        | components["schemas"]["ConfirmationPromptElement"]
+        | components["schemas"]["SourceReferenceElement"]
+        | components["schemas"]["SupportInquiryFormElement"]
+      )[];
+      /**
+       * Freshness
+       * @default historical_snapshot
+       * @constant
+       */
+      freshness: "historical_snapshot";
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /**
+       * Kind
+       * @enum {string}
+       */
+      kind: "welcome" | "turn";
+      /** Ordinal */
+      ordinal: number;
+      /**
+       * Role
+       * @enum {string}
+       */
+      role: "user" | "assistant";
+      /** Text */
+      text: string;
+    };
+    /** DeleteQuoteLineRequest */
+    DeleteQuoteLineRequest: {
+      /** Expected Version */
+      expected_version: number;
+      /**
+       * Operation Id
+       * Format: uuid
+       */
+      operation_id: string;
+    };
+    /**
+     * DraftQuoteLinePublic
+     * @description Current catalog display details with an indicative price captured at first add.
+     */
+    DraftQuoteLinePublic: {
+      availability: components["schemas"]["AvailabilityStatus"];
+      /** Availability Notice */
+      availability_notice: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Indicative Line Subtotal Usd */
+      indicative_line_subtotal_usd: string;
+      /** Indicative Unit Price Usd */
+      indicative_unit_price_usd: string;
+      /** Product Id */
+      product_id: string;
+      /** Product Name */
+      product_name: string;
+      /** Quantity Sufficient */
+      quantity_sufficient: boolean;
+      /** Requested Quantity */
+      requested_quantity: number;
+      /** Sales Unit */
+      sales_unit: string;
+      /** Selector Attributes */
+      selector_attributes: {
+        [key: string]: unknown;
+      };
+      /** Sku */
+      sku: string;
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string;
+    };
+    /** DraftQuotePublic */
+    DraftQuotePublic: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Indicative Total Usd */
+      indicative_total_usd: string;
+      /** Lines */
+      lines: components["schemas"]["DraftQuoteLinePublic"][];
+      status: components["schemas"]["QuoteDraftStatus"];
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string;
+      /** Version */
+      version: number;
+    };
+    /** DraftQuoteResponse */
+    DraftQuoteResponse: {
+      draft: components["schemas"]["DraftQuotePublic"] | null;
+    };
+    /** GuestSessionPublic */
+    GuestSessionPublic: {
+      /**
+       * Conversation Id
+       * Format: uuid
+       */
+      conversation_id: string;
+      /**
+       * Expires At
+       * Format: date-time
+       */
+      expires_at: string;
+    };
+    /** HTTPValidationError */
+    HTTPValidationError: {
+      /** Detail */
+      detail?: components["schemas"]["ValidationError"][];
+    };
+    /** InventoryNoticeElement */
+    InventoryNoticeElement: {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      kind: "inventory_notice";
+      notice: components["schemas"]["AvailabilityResponse"];
+    };
+    /** LivenessResponse */
+    LivenessResponse: {
+      /** Status */
+      status: string;
+    };
+    /**
+     * ProductCardPublic
+     * @description A resolved sellable SKU suitable for a product-results batch.
+     */
+    ProductCardPublic: {
+      availability: components["schemas"]["AvailabilityStatus"];
+      /** Category Code */
+      category_code: string;
+      /** Category Name */
+      category_name: string;
+      /** Image Fallback Key */
+      image_fallback_key: string;
+      /** Indicative Price Usd */
+      indicative_price_usd: string;
+      lifecycle_status: components["schemas"]["CatalogLifecycleStatus"];
+      /** Name */
+      name: string;
+      /** Primary Image Reference */
+      primary_image_reference: string | null;
+      /** Product Id */
+      product_id: string;
+      /** Sales Unit */
+      sales_unit: string;
+      /** Selector Attributes */
+      selector_attributes: {
+        [key: string]: unknown;
+      };
+      /** Sku */
+      sku: string;
+    };
+    /** ProductDetailPublic */
+    ProductDetailPublic: {
+      availability: components["schemas"]["AvailabilityStatus"];
+      /** Category Code */
+      category_code: string;
+      /** Category Name */
+      category_name: string;
+      /** Description */
+      description: string;
+      /** Image Fallback Key */
+      image_fallback_key: string;
+      /** Indicative Price Usd */
+      indicative_price_usd: string;
+      lifecycle_status: components["schemas"]["CatalogLifecycleStatus"];
+      /** Name */
+      name: string;
+      /** Primary Image Reference */
+      primary_image_reference: string | null;
+      /** Product Id */
+      product_id: string;
+      /** Sales Unit */
+      sales_unit: string;
+      /** Searchable Attributes */
+      searchable_attributes: {
+        [key: string]: unknown;
+      };
+      /** Selector Attributes */
+      selector_attributes: {
+        [key: string]: unknown;
+      };
+      /** Sku */
+      sku: string;
+    };
+    /** ProductResultsElement */
+    ProductResultsElement: {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      kind: "product_results";
+      result_set: components["schemas"]["ProductSearchResponse"];
+    };
+    /** ProductSearchResponse */
+    ProductSearchResponse: {
+      /** Next Cursor */
+      next_cursor: string | null;
+      /** Products */
+      products: components["schemas"]["ProductCardPublic"][];
+    };
+    /** QuoteContact */
+    QuoteContact: {
+      /** Email */
+      email?: string | null;
+      /** First Name */
+      first_name: string;
+      /** Last Name */
+      last_name: string;
+      /** Phone */
+      phone?: string | null;
+    };
+    /**
+     * QuoteDraftStatus
+     * @enum {string}
+     */
+    QuoteDraftStatus: "active" | "submitted";
+    /** QuoteReviewPublic */
+    QuoteReviewPublic: {
+      /** Disclosure */
+      disclosure: string;
+      draft: components["schemas"]["DraftQuotePublic"];
+      /**
+       * Expires At
+       * Format: date-time
+       */
+      expires_at: string;
+      /** Review Token */
+      review_token: string;
+    };
+    /** QuoteReviewRequest */
+    QuoteReviewRequest: {
+      contact: components["schemas"]["QuoteContact"];
+      /** Delivery City */
+      delivery_city?: string | null;
+      /** Expected Version */
+      expected_version: number;
+      /**
+       * Fulfillment
+       * @enum {string}
+       */
+      fulfillment: "delivery" | "cali_pickup";
+    };
+    /** QuoteSubmissionPublic */
+    QuoteSubmissionPublic: {
+      /** Message */
+      message: string;
+      /** Reference */
+      reference: string;
+      /**
+       * Submitted At
+       * Format: date-time
+       */
+      submitted_at: string;
+    };
+    /** QuoteSubmitRequest */
+    QuoteSubmitRequest: {
+      /**
+       * Confirmation
+       * @constant
+       */
+      confirmation: true;
+      /** Expected Version */
+      expected_version: number;
+      /**
+       * Operation Id
+       * Format: uuid
+       */
+      operation_id: string;
+      /** Review Token */
+      review_token: string;
+    };
+    /** QuoteUpdateElement */
+    QuoteUpdateElement: {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      kind: "quote_update";
+      quote: components["schemas"]["QuoteUpdateSnapshot"];
+    };
+    /**
+     * QuoteUpdateSnapshot
+     * @description Minimal quote display reference; authoritative quote data remains separate.
+     */
+    QuoteUpdateSnapshot: {
+      /**
+       * Draft Id
+       * Format: uuid
+       */
+      draft_id: string;
+      /** Version */
+      version: number;
+    };
+    /** SessionBootstrapResponse */
+    SessionBootstrapResponse: {
+      /**
+       * Conversation Id
+       * Format: uuid
+       */
+      conversation_id: string;
+      /**
+       * Expires At
+       * Format: date-time
+       */
+      expires_at: string;
+      /** Restored */
+      restored: boolean;
+      /** Welcome Message */
+      welcome_message: string;
+    };
+    /** SourceReferenceElement */
+    SourceReferenceElement: {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      kind: "source_reference";
+      source: components["schemas"]["SourceReferenceSnapshot"];
+    };
+    /**
+     * SourceReferenceSnapshot
+     * @description Approved evidence metadata persisted with an assistant response.
+     */
+    SourceReferenceSnapshot: {
+      /** Excerpt */
+      excerpt: string;
+      /** Source Id */
+      source_id: string;
+      /** Title */
+      title: string;
+    };
+    /** SupportContact */
+    SupportContact: {
+      /** Email */
+      email?: string | null;
+      /** First Name */
+      first_name: string;
+      /** Last Name */
+      last_name: string;
+      /** Phone */
+      phone?: string | null;
+    };
+    /** SupportInquiryFormElement */
+    SupportInquiryFormElement: {
+      form: components["schemas"]["SupportInquiryFormSnapshot"];
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      kind: "support_inquiry_form";
+    };
+    /**
+     * SupportInquiryFormSnapshot
+     * @description Display metadata for the later opt-in support workflow.
+     */
+    SupportInquiryFormSnapshot: {
+      /** Description */
+      description: string;
+      /** Title */
+      title: string;
+    };
+    /** SupportInquiryPublic */
+    SupportInquiryPublic: {
+      /** Message */
+      message: string;
+      /** Reference */
+      reference: string;
+      /**
+       * Submitted At
+       * Format: date-time
+       */
+      submitted_at: string;
+    };
+    /** SupportReviewPublic */
+    SupportReviewPublic: {
+      /** Disclosure */
+      disclosure: string;
+      /**
+       * Expires At
+       * Format: date-time
+       */
+      expires_at: string;
+      /** Review Token */
+      review_token: string;
+      /** Subject */
+      subject: string;
+      /** Summary */
+      summary: string;
+    };
+    /** SupportReviewRequest */
+    SupportReviewRequest: {
+      contact?: components["schemas"]["SupportContact"] | null;
+      /** Conversation Context */
+      conversation_context?: string | null;
+      /**
+       * Opt In
+       * @constant
+       */
+      opt_in: true;
+      /**
+       * Reuse Contact
+       * @default false
+       */
+      reuse_contact: boolean;
+      /** Subject */
+      subject: string;
+      /** Summary */
+      summary: string;
+    };
+    /** SupportSubmitRequest */
+    SupportSubmitRequest: {
+      /**
+       * Confirmation
+       * @constant
+       */
+      confirmation: true;
+      /**
+       * Operation Id
+       * Format: uuid
+       */
+      operation_id: string;
+      /** Review Token */
+      review_token: string;
+    };
+    /** UpdateQuoteLineRequest */
+    UpdateQuoteLineRequest: {
+      /** Expected Version */
+      expected_version: number;
+      /**
+       * Mode
+       * @enum {string}
+       */
+      mode: "replace" | "increment";
+      /**
+       * Operation Id
+       * Format: uuid
+       */
+      operation_id: string;
+      /** Quantity */
+      quantity: number;
+    };
+    /** ValidationError */
+    ValidationError: {
+      /** Context */
+      ctx?: Record<string, never>;
+      /** Input */
+      input?: unknown;
+      /** Location */
+      loc: (string | number)[];
+      /** Message */
+      msg: string;
+      /** Error Type */
+      type: string;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    get_current_conversation_api_v1_conversations_current_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ConversationHistoryResponse"];
-                };
-            };
-            /** @description Guest authentication is required. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description The requested resource was not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description The request could not be completed. */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-        };
+  get_current_conversation_api_v1_conversations_current_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    get_liveness_api_v1_live_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LivenessResponse"];
-                };
-            };
+        content: {
+          "application/json": components["schemas"]["ConversationHistoryResponse"];
         };
+      };
+      /** @description Guest authentication is required. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description The requested resource was not found. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description The request could not be completed. */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
     };
-    check_product_availability_api_v1_products_availability_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AvailabilityRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AvailabilityResponse"];
-                };
-            };
-            /** @description The requested resource was not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description The request is invalid. */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-        };
+  };
+  get_liveness_api_v1_live_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    search_products_api_v1_products_search_get: {
-        parameters: {
-            query?: {
-                q?: string | null;
-                sku?: string | null;
-                product_id?: string | null;
-                category?: string | null;
-                size?: string | null;
-                material?: string | null;
-                product_type?: string | null;
-                model_system?: string | null;
-                capacity?: string | null;
-                sales_unit?: string | null;
-                attribute_key?: string | null;
-                attribute_value?: string | null;
-                cursor?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProductSearchResponse"];
-                };
-            };
-            /** @description The request is invalid. */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
+        content: {
+          "application/json": components["schemas"]["LivenessResponse"];
         };
+      };
     };
-    get_product_api_v1_products__sku__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                sku: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProductDetailPublic"];
-                };
-            };
-            /** @description The requested resource was not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  check_product_availability_api_v1_products_availability_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    get_draft_quote_api_v1_quotations_draft_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DraftQuoteResponse"];
-                };
-            };
-            /** @description Guest authentication is required. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AvailabilityRequest"];
+      };
     };
-    add_quote_line_api_v1_quotations_draft_lines_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AddQuoteLineRequest"];
-            };
+        content: {
+          "application/json": components["schemas"]["AvailabilityResponse"];
         };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DraftQuotePublic"];
-                };
-            };
-            /** @description Guest authentication is required. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description Trusted Origin validation failed. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description The requested resource was not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description The request conflicts with committed state. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description The request is invalid. */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
+      };
+      /** @description The requested resource was not found. */
+      404: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description The request is invalid. */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
     };
-    delete_quote_line_api_v1_quotations_draft_lines__line_id__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                line_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteQuoteLineRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DraftQuotePublic"];
-                };
-            };
-            /** @description Guest authentication is required. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description Trusted Origin validation failed. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description The requested resource was not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description The request conflicts with committed state. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  search_products_api_v1_products_search_get: {
+    parameters: {
+      query?: {
+        q?: string | null;
+        sku?: string | null;
+        product_id?: string | null;
+        category?: string | null;
+        size?: string | null;
+        material?: string | null;
+        product_type?: string | null;
+        model_system?: string | null;
+        capacity?: string | null;
+        sales_unit?: string | null;
+        attribute_key?: string | null;
+        attribute_value?: string | null;
+        cursor?: string | null;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    update_quote_line_api_v1_quotations_draft_lines__line_id__patch: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                line_id: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateQuoteLineRequest"];
-            };
+        content: {
+          "application/json": components["schemas"]["ProductSearchResponse"];
         };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DraftQuotePublic"];
-                };
-            };
-            /** @description Guest authentication is required. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description Trusted Origin validation failed. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description The requested resource was not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description The request conflicts with committed state. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+      };
+      /** @description The request is invalid. */
+      422: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
     };
-    review_quote_draft_api_v1_quotations_draft_review_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["QuoteReviewRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["QuoteReviewPublic"];
-                };
-            };
-            /** @description Guest authentication is required. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description Trusted Origin validation failed. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description The request conflicts with committed state. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description The request is invalid. */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-        };
+  };
+  get_product_api_v1_products__sku__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        sku: string;
+      };
+      cookie?: never;
     };
-    submit_quote_api_v1_quotations_submissions_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["QuoteSubmitRequest"];
-            };
+        content: {
+          "application/json": components["schemas"]["ProductDetailPublic"];
         };
-        responses: {
-            /** @description Committed idempotent replay. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["QuoteSubmissionPublic"];
-                };
-            };
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["QuoteSubmissionPublic"];
-                };
-            };
-            /** @description Guest authentication is required. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description Trusted Origin validation failed. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description The request conflicts with committed state. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+      };
+      /** @description The requested resource was not found. */
+      404: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    reconcile_quote_submission_api_v1_quotations_submissions_reconcile__operation_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                operation_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["QuoteSubmissionPublic"];
-                };
-            };
-            /** @description Guest authentication is required. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description The requested resource was not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  get_draft_quote_api_v1_quotations_draft_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    get_readiness_api_v1_ready_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LivenessResponse"];
-                };
-            };
+        content: {
+          "application/json": components["schemas"]["DraftQuoteResponse"];
         };
+      };
+      /** @description Guest authentication is required. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
     };
-    bootstrap_session_api_v1_sessions_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SessionBootstrapResponse"];
-                };
-            };
-            /** @description A new guest session was created. */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SessionBootstrapResponse"];
-                };
-            };
-            /** @description Trusted Origin validation failed. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-        };
+  };
+  add_quote_line_api_v1_quotations_draft_lines_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    get_current_session_api_v1_sessions_current_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GuestSessionPublic"];
-                };
-            };
-            /** @description Guest authentication is required. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AddQuoteLineRequest"];
+      };
     };
-    submit_support_inquiry_api_v1_support_inquiries_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SupportSubmitRequest"];
-            };
+        content: {
+          "application/json": components["schemas"]["DraftQuotePublic"];
         };
-        responses: {
-            /** @description Committed idempotent replay. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SupportInquiryPublic"];
-                };
-            };
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SupportInquiryPublic"];
-                };
-            };
-            /** @description Guest authentication is required. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description Trusted Origin validation failed. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description The request conflicts with committed state. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+      };
+      /** @description Guest authentication is required. */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description Trusted Origin validation failed. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description The requested resource was not found. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description The request conflicts with committed state. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description The request is invalid. */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
     };
-    reconcile_support_inquiry_api_v1_support_inquiries_reconcile__operation_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                operation_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SupportInquiryPublic"];
-                };
-            };
-            /** @description Guest authentication is required. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description The requested resource was not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  delete_quote_line_api_v1_quotations_draft_lines__line_id__delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        line_id: string;
+      };
+      cookie?: never;
     };
-    review_support_inquiry_api_v1_support_review_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SupportReviewRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SupportReviewPublic"];
-                };
-            };
-            /** @description Guest authentication is required. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description Trusted Origin validation failed. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description The request is invalid. */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DeleteQuoteLineRequest"];
+      };
     };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["DraftQuotePublic"];
+        };
+      };
+      /** @description Guest authentication is required. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description Trusted Origin validation failed. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description The requested resource was not found. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description The request conflicts with committed state. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  update_quote_line_api_v1_quotations_draft_lines__line_id__patch: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        line_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateQuoteLineRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["DraftQuotePublic"];
+        };
+      };
+      /** @description Guest authentication is required. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description Trusted Origin validation failed. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description The requested resource was not found. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description The request conflicts with committed state. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  review_quote_draft_api_v1_quotations_draft_review_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["QuoteReviewRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["QuoteReviewPublic"];
+        };
+      };
+      /** @description Guest authentication is required. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description Trusted Origin validation failed. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description The request conflicts with committed state. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description The request is invalid. */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+    };
+  };
+  submit_quote_api_v1_quotations_submissions_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["QuoteSubmitRequest"];
+      };
+    };
+    responses: {
+      /** @description Committed idempotent replay. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["QuoteSubmissionPublic"];
+        };
+      };
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["QuoteSubmissionPublic"];
+        };
+      };
+      /** @description Guest authentication is required. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description Trusted Origin validation failed. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description The request conflicts with committed state. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  reconcile_quote_submission_api_v1_quotations_submissions_reconcile__operation_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        operation_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["QuoteSubmissionPublic"];
+        };
+      };
+      /** @description Guest authentication is required. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description The requested resource was not found. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_readiness_api_v1_ready_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LivenessResponse"];
+        };
+      };
+    };
+  };
+  bootstrap_session_api_v1_sessions_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SessionBootstrapResponse"];
+        };
+      };
+      /** @description A new guest session was created. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SessionBootstrapResponse"];
+        };
+      };
+      /** @description Trusted Origin validation failed. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+    };
+  };
+  get_current_session_api_v1_sessions_current_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["GuestSessionPublic"];
+        };
+      };
+      /** @description Guest authentication is required. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+    };
+  };
+  submit_support_inquiry_api_v1_support_inquiries_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SupportSubmitRequest"];
+      };
+    };
+    responses: {
+      /** @description Committed idempotent replay. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SupportInquiryPublic"];
+        };
+      };
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SupportInquiryPublic"];
+        };
+      };
+      /** @description Guest authentication is required. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description Trusted Origin validation failed. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description The request conflicts with committed state. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  reconcile_support_inquiry_api_v1_support_inquiries_reconcile__operation_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        operation_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SupportInquiryPublic"];
+        };
+      };
+      /** @description Guest authentication is required. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description The requested resource was not found. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  review_support_inquiry_api_v1_support_review_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SupportReviewRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SupportReviewPublic"];
+        };
+      };
+      /** @description Guest authentication is required. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description Trusted Origin validation failed. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description The request is invalid. */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+    };
+  };
 }

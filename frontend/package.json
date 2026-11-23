@@ -12,7 +12,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
-    "generate:api-types": "cd ../backend && uv run python -m scripts.generate_openapi && cd ../frontend && openapi-typescript ../backend/openapi.json -o src/lib/api/generated.ts",
+    "generate:api-types": "cd ../backend && uv run python -m scripts.generate_openapi && cd ../frontend && openapi-typescript ../backend/openapi.json -o src/lib/api/generated.ts && prettier --write src/lib/api/generated.ts",
     "check:api-types": "npm run generate:api-types && git diff --exit-code -- src/lib/api/generated.ts ../backend/openapi.json"
   },
   "dependencies": {
