@@ -173,6 +173,119 @@
         "title": "CatalogLifecycleStatus",
         "type": "string"
       },
+      "ChatTurnRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "client_message_id": {
+            "format": "uuid",
+            "title": "Client Message Id",
+            "type": "string"
+          },
+          "cursor": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cursor"
+          },
+          "text": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "client_message_id",
+          "text"
+        ],
+        "title": "ChatTurnRequest",
+        "type": "object"
+      },
+      "ChatTurnResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "assistant_message": {
+            "$ref": "#/components/schemas/ConversationMessagePublic"
+          },
+          "client_message_id": {
+            "format": "uuid",
+            "title": "Client Message Id",
+            "type": "string"
+          },
+          "conversation_id": {
+            "format": "uuid",
+            "title": "Conversation Id",
+            "type": "string"
+          },
+          "draft_changed": {
+            "title": "Draft Changed",
+            "type": "boolean"
+          },
+          "elements": {
+            "items": {
+              "discriminator": {
+                "mapping": {
+                  "confirmation_prompt": "#/components/schemas/ConfirmationPromptElement",
+                  "inventory_notice": "#/components/schemas/InventoryNoticeElement",
+                  "product_results": "#/components/schemas/ProductResultsElement",
+                  "quote_update": "#/components/schemas/QuoteUpdateElement",
+                  "source_reference": "#/components/schemas/SourceReferenceElement",
+                  "support_inquiry_form": "#/components/schemas/SupportInquiryFormElement"
+                },
+                "propertyName": "kind"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ProductResultsElement"
+                },
+                {
+                  "$ref": "#/components/schemas/InventoryNoticeElement"
+                },
+                {
+                  "$ref": "#/components/schemas/QuoteUpdateElement"
+                },
+                {
+                  "$ref": "#/components/schemas/ConfirmationPromptElement"
+                },
+                {
+                  "$ref": "#/components/schemas/SourceReferenceElement"
+                },
+                {
+                  "$ref": "#/components/schemas/SupportInquiryFormElement"
+                }
+              ]
+            },
+            "title": "Elements",
+            "type": "array"
+          },
+          "request_id": {
+            "format": "uuid",
+            "title": "Request Id",
+            "type": "string"
+          },
+          "user_message": {
+            "$ref": "#/components/schemas/ConversationMessagePublic"
+          }
+        },
+        "required": [
+          "conversation_id",
+          "client_message_id",
+          "user_message",
+          "assistant_message",
+          "elements",
+          "draft_changed",
+          "request_id"
+        ],
+        "title": "ChatTurnResponse",
+        "type": "object"
+      },
       "ConfirmationPromptElement": {
         "additionalProperties": false,
         "properties": {
@@ -1420,6 +1533,102 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/chat/messages": {
+      "post": {
+        "operationId": "send_chat_message_api_v1_chat_messages_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatTurnRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatTurnResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Guest authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Trusted Origin validation failed."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "The request conflicts with committed state."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "The request could not be completed."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "The requested provider is unavailable."
+          }
+        },
+        "security": [
+          {
+            "GuestSessionCookie": []
+          }
+        ],
+        "summary": "Send Chat Message",
+        "tags": [
+          "chat"
+        ]
+      }
+    },
     "/api/v1/conversations/current": {
       "get": {
         "description": "Restore stored display snapshots without recalculating current catalog facts.",

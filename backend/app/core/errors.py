@@ -47,6 +47,7 @@ _STATUS_CODES: dict[int, ApiErrorCode] = {
     404: "NOT_FOUND",
     409: "OPERATION_UNCERTAIN",
     422: "VALIDATION_FAILED",
+    503: "AI_UNAVAILABLE",
     500: "AI_UNAVAILABLE",
 }
 
@@ -57,6 +58,7 @@ _STATUS_DESCRIPTIONS = {
     409: "The request conflicts with committed state.",
     422: "The request is invalid.",
     500: "The request could not be completed.",
+    503: "The requested provider is unavailable.",
 }
 
 
