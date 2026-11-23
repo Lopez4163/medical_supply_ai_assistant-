@@ -53,7 +53,11 @@ async def client_and_session(
     app.dependency_overrides[get_session_service] = get_test_session_service
     try:
         transport = httpx.ASGITransport(app=app)
-        async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+        async with httpx.AsyncClient(
+            transport=transport,
+            base_url="http://test",
+            headers={"Origin": "http://test"},
+        ) as client:
             yield client, db_session
     finally:
         app.dependency_overrides.clear()

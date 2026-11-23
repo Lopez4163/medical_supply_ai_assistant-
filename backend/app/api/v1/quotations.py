@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.v1.sessions import get_guest_context, require_quotation_origin
+from app.core.errors import api_error_responses
 from app.core.settings import Settings, get_settings
 from app.db.session import get_db_session
 from app.schemas.quotations import (
@@ -54,7 +55,11 @@ def _raise_quote_error(error: Exception) -> NoReturn:
         ) from None
     if isinstance(error, IdempotencyPayloadMismatch):
         raise HTTPException(
-            status_code=409, detail="This operation ID was already used for another action."
+            status_code=409,
+            detail={
+                "code": "VALIDATION_FAILED",
+                "message": "This operation ID was already used for another action.",
+            },
         ) from None
     if isinstance(error, QuoteLineNotFound):
         raise HTTPException(status_code=404, detail="Quotation line was not found.") from None
@@ -62,26 +67,34 @@ def _raise_quote_error(error: Exception) -> NoReturn:
         raise HTTPException(
             status_code=401,
             detail={
-                "code": "GUEST_SESSION_INVALID",
+                "code": "SESSION_NOT_FOUND",
                 "message": "Guest session is missing or invalid.",
             },
         ) from None
     if isinstance(error, QuoteSkuUnresolved):
         raise HTTPException(
-            status_code=422, detail="Select a sellable SKU variant before adding it to a quotation."
+            status_code=422,
+            detail={
+                "code": "SKU_NOT_RESOLVED",
+                "message": "Select a sellable SKU variant before adding it to a quotation.",
+            },
         ) from None
     if isinstance(error, QuoteSkuNotFound):
         raise HTTPException(status_code=404, detail="Product SKU was not found.") from None
     if isinstance(error, QuoteReviewInvalid):
         raise HTTPException(
-            status_code=409, detail="The quotation review is invalid or expired."
+            status_code=409,
+            detail={
+                "code": "CONFIRMATION_INVALID",
+                "message": "The quotation review is invalid or expired.",
+            },
         ) from None
     if isinstance(error, ValueError):
         raise HTTPException(status_code=422, detail=str(error)) from None
     raise error
 
 
-@router.get("/draft", response_model=DraftQuoteResponse)
+@router.get("/draft", response_model=DraftQuoteResponse, responses=api_error_responses(401))
 async def get_draft_quote(
     guest: Annotated[GuestContext, Depends(get_guest_context)],
     service: Annotated[QuotationService, Depends(get_quotation_service)],
@@ -89,7 +102,11 @@ async def get_draft_quote(
     return DraftQuoteResponse(draft=await service.get_draft(guest=guest))
 
 
-@router.post("/draft/lines", response_model=DraftQuotePublic)
+@router.post(
+    "/draft/lines",
+    response_model=DraftQuotePublic,
+    responses=api_error_responses(401, 403, 404, 409, 422),
+)
 async def add_quote_line(
     request: AddQuoteLineRequest,
     _: Annotated[None, Depends(require_quotation_origin)],
@@ -109,7 +126,11 @@ async def add_quote_line(
         _raise_quote_error(error)
 
 
-@router.patch("/draft/lines/{line_id}", response_model=DraftQuotePublic)
+@router.patch(
+    "/draft/lines/{line_id}",
+    response_model=DraftQuotePublic,
+    responses=api_error_responses(401, 403, 404, 409),
+)
 async def update_quote_line(
     line_id: UUID,
     request: UpdateQuoteLineRequest,
@@ -128,7 +149,11 @@ async def update_quote_line(
         _raise_quote_error(error)
 
 
-@router.delete("/draft/lines/{line_id}", response_model=DraftQuotePublic)
+@router.delete(
+    "/draft/lines/{line_id}",
+    response_model=DraftQuotePublic,
+    responses=api_error_responses(401, 403, 404, 409),
+)
 async def delete_quote_line(
     line_id: UUID,
     request: DeleteQuoteLineRequest,
@@ -148,7 +173,11 @@ async def delete_quote_line(
         _raise_quote_error(error)
 
 
-@router.post("/draft/review", response_model=QuoteReviewPublic)
+@router.post(
+    "/draft/review",
+    response_model=QuoteReviewPublic,
+    responses=api_error_responses(401, 403, 409, 422),
+)
 async def review_quote_draft(
     request: QuoteReviewRequest,
     _: Annotated[None, Depends(require_quotation_origin)],
@@ -167,7 +196,15 @@ async def review_quote_draft(
         _raise_quote_error(error)
 
 
-@router.post("/submissions", response_model=QuoteSubmissionPublic, status_code=201)
+@router.post(
+    "/submissions",
+    response_model=QuoteSubmissionPublic,
+    status_code=201,
+    responses={
+        200: {"model": QuoteSubmissionPublic, "description": "Committed idempotent replay."},
+        **api_error_responses(401, 403, 409),
+    },
+)
 async def submit_quote(
     request: QuoteSubmitRequest,
     response: Response,
@@ -194,7 +231,11 @@ async def submit_quote(
         _raise_quote_error(error)
 
 
-@router.get("/submissions/reconcile/{operation_id}", response_model=QuoteSubmissionPublic)
+@router.get(
+    "/submissions/reconcile/{operation_id}",
+    response_model=QuoteSubmissionPublic,
+    responses=api_error_responses(401, 404),
+)
 async def reconcile_quote_submission(
     operation_id: UUID,
     guest: Annotated[GuestContext, Depends(get_guest_context)],

@@ -11,7 +11,9 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "generate:api-types": "cd ../backend && uv run python -m scripts.generate_openapi && cd ../frontend && openapi-typescript ../backend/openapi.json -o src/lib/api/generated.ts && prettier --write src/lib/api/generated.ts",
+    "check:api-types": "npm run generate:api-types && git diff --exit-code -- src/lib/api/generated.ts ../backend/openapi.json"
   },
   "dependencies": {
     "next": "16.4.5",
@@ -19,9 +21,9 @@
     "react-dom": "19.3.1"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "4.1.18",
     "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "16.3.3",
-    "@tailwindcss/postcss": "4.1.18",
     "@types/node": "22.19.7",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
@@ -30,6 +32,7 @@
     "eslint-config-next": "16.4.5",
     "eslint-config-prettier": "10.1.8",
     "jsdom": "31.0.0",
+    "openapi-typescript": "^7.12.0",
     "prettier": "3.9.10",
     "tailwindcss": "4.1.18",
     "typescript": "5.9.3",
