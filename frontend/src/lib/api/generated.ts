@@ -4,6 +4,23 @@
  */
 
 export interface paths {
+  "/api/v1/chat/messages": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Send Chat Message */
+    post: operations["send_chat_message_api_v1_chat_messages_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/conversations/current": {
     parameters: {
       query?: never;
@@ -400,6 +417,49 @@ export interface components {
      * @enum {string}
      */
     CatalogLifecycleStatus: "active" | "discontinued";
+    /** ChatTurnRequest */
+    ChatTurnRequest: {
+      /**
+       * Client Message Id
+       * Format: uuid
+       */
+      client_message_id: string;
+      /** Cursor */
+      cursor?: string | null;
+      /** Text */
+      text: string;
+    };
+    /** ChatTurnResponse */
+    ChatTurnResponse: {
+      assistant_message: components["schemas"]["ConversationMessagePublic"];
+      /**
+       * Client Message Id
+       * Format: uuid
+       */
+      client_message_id: string;
+      /**
+       * Conversation Id
+       * Format: uuid
+       */
+      conversation_id: string;
+      /** Draft Changed */
+      draft_changed: boolean;
+      /** Elements */
+      elements: (
+        | components["schemas"]["ProductResultsElement"]
+        | components["schemas"]["InventoryNoticeElement"]
+        | components["schemas"]["QuoteUpdateElement"]
+        | components["schemas"]["ConfirmationPromptElement"]
+        | components["schemas"]["SourceReferenceElement"]
+        | components["schemas"]["SupportInquiryFormElement"]
+      )[];
+      /**
+       * Request Id
+       * Format: uuid
+       */
+      request_id: string;
+      user_message: components["schemas"]["ConversationMessagePublic"];
+    };
     /** ConfirmationPromptElement */
     ConfirmationPromptElement: {
       /**
@@ -930,6 +990,84 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+  send_chat_message_api_v1_chat_messages_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ChatTurnRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ChatTurnResponse"];
+        };
+      };
+      /** @description Guest authentication is required. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description Trusted Origin validation failed. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description The request conflicts with committed state. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description The request is invalid. */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description The request could not be completed. */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** @description The requested provider is unavailable. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+    };
+  };
   get_current_conversation_api_v1_conversations_current_get: {
     parameters: {
       query?: never;
