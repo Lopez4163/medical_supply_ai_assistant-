@@ -30,8 +30,12 @@ from app.models.conversation import Conversation, ConversationMessage, GuestSess
 from app.models.quotation import (
     IdempotencyOperation,
     IdempotencyOperationStatus,
+    OutboxJob,
+    ProtectedReview,
     QuoteDraft,
     QuoteDraftLine,
+    QuoteSubmission,
+    QuoteSubmissionLine,
 )
 from app.schemas.quotations import DraftQuotePublic
 from app.services.quotations import QuotationService, QuoteSessionInvalid, QuoteVersionConflict
@@ -100,6 +104,26 @@ async def _remove_committed_guest(guest: GuestContext) -> None:
             )
         )
         if draft_ids:
+            submission_ids = list(
+                await session.scalars(
+                    select(QuoteSubmission.id).where(QuoteSubmission.draft_id.in_(draft_ids))
+                )
+            )
+            if submission_ids:
+                await session.execute(
+                    delete(OutboxJob).where(OutboxJob.aggregate_id.in_(submission_ids))
+                )
+                await session.execute(
+                    delete(QuoteSubmissionLine).where(
+                        QuoteSubmissionLine.submission_id.in_(submission_ids)
+                    )
+                )
+            await session.execute(
+                delete(ProtectedReview).where(ProtectedReview.draft_id.in_(draft_ids))
+            )
+            await session.execute(
+                delete(QuoteSubmission).where(QuoteSubmission.draft_id.in_(draft_ids))
+            )
             await session.execute(
                 delete(QuoteDraftLine).where(QuoteDraftLine.draft_id.in_(draft_ids))
             )
@@ -613,5 +637,343 @@ async def test_mutation_rollback_does_not_persist_an_operation_or_line(
             assert variant is not None and variant.sku == "PPE-NIT-M"
             assert len(operations) == 1
             assert operations[0].status == IdempotencyOperationStatus.COMMITTED
+    finally:
+        await _remove_committed_guest(guest)
+
+
+@pytest.mark.asyncio
+async def test_review_submission_is_idempotent_and_creates_an_outbox_record(
+    quote_client: tuple[httpx.AsyncClient, AsyncSession],
+) -> None:
+    client, session = quote_client
+    await _bootstrap(client)
+    added = await client.post("/api/v1/quotations/draft/lines", json=_add_payload())
+    assert added.status_code == 200
+    review = await client.post(
+        "/api/v1/quotations/draft/review",
+        json={
+            "expected_version": 1,
+            "contact": {"first_name": "Demo", "last_name": "Guest", "email": "demo@example.test"},
+            "fulfillment": "cali_pickup",
+            "delivery_city": None,
+        },
+    )
+    assert review.status_code == 200
+    operation_id = str(uuid4())
+    payload = {
+        "review_token": review.json()["review_token"],
+        "expected_version": 1,
+        "confirmation": True,
+        "operation_id": operation_id,
+    }
+    first = await client.post("/api/v1/quotations/submissions", json=payload)
+    second = await client.post("/api/v1/quotations/submissions", json=payload)
+    assert first.status_code == 201
+    assert second.status_code == 200
+    assert second.json() == first.json()
+    conflicting = await client.post(
+        "/api/v1/quotations/submissions", json={**payload, "expected_version": 2}
+    )
+    assert conflicting.status_code == 409
+    reused = await client.post(
+        "/api/v1/quotations/submissions", json={**payload, "operation_id": str(uuid4())}
+    )
+    assert reused.status_code == 409
+    assert await session.scalar(select(func.count()).select_from(QuoteSubmission)) == 1
+    assert await session.scalar(select(func.count()).select_from(QuoteSubmissionLine)) == 1
+    assert await session.scalar(select(func.count()).select_from(OutboxJob)) == 1
+    assert (
+        await client.get(f"/api/v1/quotations/submissions/reconcile/{operation_id}")
+    ).json() == first.json()
+
+
+@pytest.mark.asyncio
+async def test_price_change_after_review_invalidates_submission_without_an_outbox_write(
+    quote_client: tuple[httpx.AsyncClient, AsyncSession],
+) -> None:
+    client, session = quote_client
+    await _bootstrap(client)
+    assert (
+        await client.post("/api/v1/quotations/draft/lines", json=_add_payload())
+    ).status_code == 200
+    review = await client.post(
+        "/api/v1/quotations/draft/review",
+        json={
+            "expected_version": 1,
+            "contact": {"first_name": "Demo", "last_name": "Guest", "phone": "555-0100"},
+            "fulfillment": "cali_pickup",
+            "delivery_city": None,
+        },
+    )
+    assert review.status_code == 200
+    variant = await session.scalar(select(SkuVariant).where(SkuVariant.sku == "PPE-NIT-M"))
+    line = await session.scalar(select(QuoteDraftLine))
+    assert variant is not None and line is not None
+    original_draft_price = line.indicative_unit_price
+    variant.indicative_price = Decimal("99.00")
+    await session.flush()
+    response = await client.post(
+        "/api/v1/quotations/submissions",
+        json={
+            "review_token": review.json()["review_token"],
+            "expected_version": 1,
+            "confirmation": True,
+            "operation_id": str(uuid4()),
+        },
+    )
+    assert response.status_code == 409
+    assert line.indicative_unit_price == original_draft_price
+    assert await session.scalar(select(func.count()).select_from(QuoteSubmission)) == 0
+    assert await session.scalar(select(func.count()).select_from(OutboxJob)) == 0
+
+
+@pytest.mark.asyncio
+async def test_review_rejects_missing_contact_delivery_city_and_cross_origin(
+    quote_client: tuple[httpx.AsyncClient, AsyncSession],
+) -> None:
+    client, _session = quote_client
+    await _bootstrap(client)
+    assert (
+        await client.post("/api/v1/quotations/draft/lines", json=_add_payload())
+    ).status_code == 200
+    payload = {
+        "expected_version": 1,
+        "contact": {"first_name": "Demo", "last_name": "Guest"},
+        "fulfillment": "delivery",
+        "delivery_city": None,
+    }
+    assert (await client.post("/api/v1/quotations/draft/review", json=payload)).status_code == 422
+    payload["contact"] = {"first_name": "Demo", "last_name": "Guest", "email": "demo@test"}
+    assert (
+        await client.post(
+            "/api/v1/quotations/draft/review", json=payload, headers={"Origin": "https://bad.test"}
+        )
+    ).status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_invalid_and_expired_review_tokens_cannot_create_submission_or_outbox(
+    quote_client: tuple[httpx.AsyncClient, AsyncSession],
+) -> None:
+    client, session = quote_client
+    await _bootstrap(client)
+    assert (
+        await client.post("/api/v1/quotations/draft/lines", json=_add_payload())
+    ).status_code == 200
+    invalid = await client.post(
+        "/api/v1/quotations/submissions",
+        json={
+            "review_token": "x" * 32,
+            "expected_version": 1,
+            "confirmation": True,
+            "operation_id": str(uuid4()),
+        },
+    )
+    assert invalid.status_code == 409
+    review = await client.post(
+        "/api/v1/quotations/draft/review",
+        json={
+            "expected_version": 1,
+            "contact": {"first_name": "Demo", "last_name": "Guest", "email": "demo@test"},
+            "fulfillment": "cali_pickup",
+            "delivery_city": None,
+        },
+    )
+    assert review.status_code == 200
+    protected_review = await session.scalar(select(ProtectedReview))
+    assert protected_review is not None
+    protected_review.expires_at = datetime(2000, 1, 1, tzinfo=UTC)
+    await session.flush()
+    expired = await client.post(
+        "/api/v1/quotations/submissions",
+        json={
+            "review_token": review.json()["review_token"],
+            "expected_version": 1,
+            "confirmation": True,
+            "operation_id": str(uuid4()),
+        },
+    )
+    assert expired.status_code == 409
+    assert await session.scalar(select(func.count()).select_from(QuoteSubmission)) == 0
+    assert await session.scalar(select(func.count()).select_from(OutboxJob)) == 0
+
+
+@pytest.mark.asyncio
+async def test_second_guest_cannot_submit_first_guests_review_token(
+    quote_client: tuple[httpx.AsyncClient, AsyncSession],
+) -> None:
+    client, session = quote_client
+    await _bootstrap(client)
+    assert (
+        await client.post("/api/v1/quotations/draft/lines", json=_add_payload())
+    ).status_code == 200
+    review = await client.post(
+        "/api/v1/quotations/draft/review",
+        json={
+            "expected_version": 1,
+            "contact": {"first_name": "Guest", "last_name": "One", "email": "one@test"},
+            "fulfillment": "cali_pickup",
+            "delivery_city": None,
+        },
+    )
+    assert review.status_code == 200
+    factory = get_session_factory()
+    async with factory() as second_session:
+        second_bootstrap = await SessionService(second_session, get_settings()).bootstrap(
+            raw_token=None
+        )
+    transport = httpx.ASGITransport(app=app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://test") as second_client:
+        second_client.headers["Origin"] = "http://test"
+        second_client.cookies.set(
+            get_settings().guest_session_cookie_name, second_bootstrap.raw_token
+        )
+        response = await second_client.post(
+            "/api/v1/quotations/submissions",
+            json={
+                "review_token": review.json()["review_token"],
+                "expected_version": 1,
+                "confirmation": True,
+                "operation_id": str(uuid4()),
+            },
+        )
+    await _remove_committed_guest(second_bootstrap.context)
+    assert response.status_code == 409
+    assert await session.scalar(select(func.count()).select_from(QuoteSubmission)) == 0
+    assert await session.scalar(select(func.count()).select_from(OutboxJob)) == 0
+
+
+@pytest.mark.asyncio
+async def test_submission_snapshot_uses_current_price_without_rewriting_draft_price(
+    quote_client: tuple[httpx.AsyncClient, AsyncSession],
+) -> None:
+    client, session = quote_client
+    await _bootstrap(client)
+    assert (
+        await client.post("/api/v1/quotations/draft/lines", json=_add_payload())
+    ).status_code == 200
+    variant = await session.scalar(select(SkuVariant).where(SkuVariant.sku == "PPE-NIT-M"))
+    line = await session.scalar(select(QuoteDraftLine))
+    assert variant is not None and line is not None
+    assert line.indicative_unit_price == Decimal("11.00")
+    variant.indicative_price = Decimal("13.00")
+    await session.flush()
+    review = await client.post(
+        "/api/v1/quotations/draft/review",
+        json={
+            "expected_version": 1,
+            "contact": {"first_name": "Demo", "last_name": "Guest", "phone": "555-0100"},
+            "fulfillment": "cali_pickup",
+            "delivery_city": None,
+        },
+    )
+    submitted = await client.post(
+        "/api/v1/quotations/submissions",
+        json={
+            "review_token": review.json()["review_token"],
+            "expected_version": 1,
+            "confirmation": True,
+            "operation_id": str(uuid4()),
+        },
+    )
+    assert submitted.status_code == 201
+    submission = await session.scalar(select(QuoteSubmission))
+    assert submission is not None
+    snapshot = cast(dict[str, object], submission.snapshot_json["draft"])
+    snapshot_lines = cast(list[dict[str, object]], snapshot["lines"])
+    assert Decimal(cast(str, snapshot_lines[0]["indicative_unit_price_usd"])) == Decimal("13.00")
+    snapshot_line = await session.scalar(select(QuoteSubmissionLine))
+    assert snapshot_line is not None
+    assert snapshot_line.sku == "PPE-NIT-M"
+    assert snapshot_line.indicative_unit_price == Decimal("13.00")
+    assert snapshot_line.quantity == 2
+    assert line.indicative_unit_price == Decimal("11.00")
+
+
+@pytest.mark.asyncio
+async def test_independent_transactions_submit_one_quotation_and_one_outbox_job() -> None:
+    guest = await _committed_guest()
+    factory = get_session_factory()
+    try:
+        async with factory() as session:
+            service = QuotationService(session, get_settings())
+            await service.add_line(
+                guest=guest, sku="PPE-NIT-M", quantity=2, expected_version=0, operation_id=uuid4()
+            )
+            review = await service.review_draft(
+                guest=guest,
+                expected_version=1,
+                contact={"first_name": "Demo", "last_name": "Guest", "email": "demo@test"},
+                fulfillment="cali_pickup",
+                delivery_city=None,
+            )
+        barrier = asyncio.Barrier(2)
+        operation_id = uuid4()
+
+        async def submit() -> object:
+            async with factory() as session:
+                await barrier.wait()
+                return await QuotationService(session, get_settings()).submit_draft(
+                    guest=guest,
+                    review_token=review.review_token,
+                    expected_version=1,
+                    operation_id=operation_id,
+                )
+
+        results = await asyncio.gather(submit(), submit(), return_exceptions=True)
+        assert all(not isinstance(result, Exception) for result in results)
+        assert results[0] == results[1]
+        async with factory() as session:
+            assert await session.scalar(select(func.count()).select_from(QuoteSubmission)) == 1
+            assert await session.scalar(select(func.count()).select_from(OutboxJob)) == 1
+    finally:
+        await _remove_committed_guest(guest)
+
+
+@pytest.mark.asyncio
+async def test_post_outbox_failure_rolls_back_then_the_same_review_retries(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    guest = await _committed_guest()
+    factory = get_session_factory()
+    operation_id = uuid4()
+    try:
+        async with factory() as session:
+            service = QuotationService(session, get_settings())
+            await service.add_line(
+                guest=guest, sku="PPE-NIT-M", quantity=2, expected_version=0, operation_id=uuid4()
+            )
+            review = await service.review_draft(
+                guest=guest,
+                expected_version=1,
+                contact={"first_name": "Demo", "last_name": "Guest", "phone": "555-0100"},
+                fulfillment="cali_pickup",
+                delivery_city=None,
+            )
+        async with factory() as session:
+            service = QuotationService(session, get_settings())
+
+            def fail_after_outbox(**_: object) -> None:
+                raise RuntimeError("forced post-outbox failure")
+
+            monkeypatch.setattr(service, "_store_operation", fail_after_outbox)
+            with pytest.raises(RuntimeError, match="post-outbox"):
+                await service.submit_draft(
+                    guest=guest,
+                    review_token=review.review_token,
+                    expected_version=1,
+                    operation_id=operation_id,
+                )
+        async with factory() as session:
+            assert await session.scalar(select(func.count()).select_from(QuoteSubmission)) == 0
+            assert await session.scalar(select(func.count()).select_from(OutboxJob)) == 0
+        async with factory() as session:
+            result = await QuotationService(session, get_settings()).submit_draft(
+                guest=guest,
+                review_token=review.review_token,
+                expected_version=1,
+                operation_id=operation_id,
+            )
+            assert result.reference.startswith("Q-")
     finally:
         await _remove_committed_guest(guest)
